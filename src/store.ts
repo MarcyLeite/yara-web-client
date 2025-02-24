@@ -8,7 +8,7 @@ import { useConsumer } from './modules/consumer'
 import { Object3D } from 'three'
 
 export const useYaraStore = () => {
-	const configuration = useConfiguration(`${window.location.origin}/yara/config.json`)
+	const configuration = useConfiguration(`${window.location.origin}/config.json`)
 	const viewHook = useView(configuration.views)
 
 	const initialDate = import.meta.env?.DEV ? new Date(import.meta.env.VITE_DEV_DATE) : new Date()

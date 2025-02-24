@@ -13,3 +13,7 @@ services:
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=$VITE_INFLUX_TOKEN
     ports:
       - 8086:8086
+  backend:
+    image: yara-backend
+    ports:
+      - 8080:8080
