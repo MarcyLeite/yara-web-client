@@ -8,10 +8,13 @@ import { useConsumer } from './modules/consumer'
 import { Object3D } from 'three'
 
 export const useYaraStore = () => {
-	const configuration = useConfiguration(`${window.location.origin}/config.json`)
+	const configuration = useConfiguration(`${import.meta.env.VITE_API_URL}`)
 	const viewHook = useView(configuration.views)
 
-	const initialDate = import.meta.env?.DEV ? new Date(import.meta.env.VITE_DEV_DATE) : new Date()
+	const dateString =
+		import.meta.env.VITE_INITIAL_DATE !== '' ? import.meta.env.VITE_INITIAL_DATE : Date.now()
+
+	const initialDate = new Date(dateString)
 	const timeControl = useTimeControl(initialDate)
 
 	const [connection, setConnection] = useState<YaraConnection | null>(null)

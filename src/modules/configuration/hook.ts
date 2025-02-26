@@ -10,22 +10,25 @@ export type YaraConfig = {
 }
 
 export const useConfiguration = (configUrl: string) => {
+	const configJsonPath = `${configUrl}/config.json`
 	const [modelPath, setModelPath] = useState<string | null>(null)
 	const [views, setViews] = useState<YaraViewConfig[] | null>(null)
 	const [connection, setConnection] = useState<YaraConnectionConfig | null>(null)
 
 	const [isLoaded, setIsLoaded] = useState(false)
+	const [isSaving, setIsSaving] = useState(false)
+	const [failMessage, setFailMessage] = useState<string | null>(null)
 
 	const fetchConfig = useCallback(async () => {
-		const response = await axios.get(configUrl)
+		const response = await axios.get(configJsonPath)
 		const data: YaraConfig = response.data
 
-		setModelPath(data['model-path'])
+		setModelPath(`${data['model-path']}`)
 		setViews(data.views)
 		setConnection(data.connection)
 
 		setIsLoaded(true)
-	}, [configUrl])
+	}, [configJsonPath])
 
 	useEffect(() => {
 		fetchConfig()
@@ -41,6 +44,7 @@ export const useConfiguration = (configUrl: string) => {
 		newViews[index] = updateView
 
 		setViews(newViews)
+		save(newViews)
 	}
 
 	const createViewConfig = (newView: Omit<YaraViewConfig, 'components'>) => {
@@ -76,15 +80,23 @@ export const useConfiguration = (configUrl: string) => {
 		newViews[viewIndex] = updateView
 
 		setViews(newViews)
+		save(newViews)
 	}
 
-	const toJson = () => {
+	const toJson = useCallback(() => {
 		return JSON.stringify({ 'model-path': modelPath, connection, views }, null, 2)
-	}
+	}, [modelPath, connection, views])
 
-	useEffect(() => {
-		console.log(views)
-	}, [views])
+	const save = async (newViews: YaraViewConfig[]) => {
+		setIsSaving(true)
+		try {
+			await axios.post(configJsonPath, { 'model-path': modelPath, connection, views: newViews })
+		} catch (e) {
+			setFailMessage('Fail to save')
+			throw e
+		}
+		setIsSaving(false)
+	}
 
 	return {
 		modelPath,
@@ -95,6 +107,8 @@ export const useConfiguration = (configUrl: string) => {
 		updateComponentConfig,
 		toJson,
 		isLoaded,
+		isSaving,
+		failMessage,
 	}
 }
 
