@@ -1,22 +1,24 @@
 import { InfluxDB, Point } from '@influxdata/influxdb-client'
-import dotenv from 'dotenv'
 import axios from 'axios'
-dotenv.config()
 
-const { VITE_INFLUX_URL, VITE_INFLUX_TOKEN, VITE_INFLUX_ORG, VITE_INFLUX_BUCKET, VITE_DEV_DATE } =
-	process.env
+const { INFLUX_URL, INFLUX_TOKEN, INFLUX_ORG, INFLUX_BUCKET, DEV_DATE } = {
+	INFLUX_ORG: 'dev',
+	INFLUX_BUCKET: 'dev',
+	INFLUX_TOKEN: 'dev-token',
+	INFLUX_URL: 'http://localhost:8086',
+}
 
 const getWriteApi = () =>
 	new Promise((resolve) => {
 		const influxDB = new InfluxDB({
-			url: VITE_INFLUX_URL,
-			token: VITE_INFLUX_TOKEN,
+			url: INFLUX_URL,
+			token: INFLUX_TOKEN,
 		})
-		const writeApi = influxDB.getWriteApi(VITE_INFLUX_ORG, VITE_INFLUX_BUCKET)
+		const writeApi = influxDB.getWriteApi(INFLUX_ORG, INFLUX_BUCKET)
 
 		const request = async () => {
 			try {
-				await axios.get(VITE_INFLUX_URL)
+				await axios.get(INFLUX_URL)
 				resolve(writeApi)
 			} catch {
 				setTimeout(request, 1000)
@@ -26,7 +28,7 @@ const getWriteApi = () =>
 	})
 
 const populateDev = async () => {
-	const now = Date.parse(VITE_DEV_DATE)
+	const now = Date.parse(DEV_DATE)
 	const writeApi = await getWriteApi()
 
 	const pointCount = 100
