@@ -17,19 +17,17 @@ import IPanel from '../common/IPanel'
 import ICalendar from '../common/ICalendar'
 import ISeparator from '../common/ISeparator'
 import Icon from '../common/Icon'
-import { useEffect, useRef } from 'react'
+import { useState } from 'react'
 
 type Props = {
 	timeControl: TimeControl
+	moment: Date
 }
 
-const TimeControlBar = ({ timeControl }: Props) => {
+const TimeControlBar = ({ timeControl, moment }: Props) => {
 	const buttonClass = 'pa-2 rounded-circle'
-	const newDateRef = useRef(timeControl.moment)
+	const [calendarDate, setCalendarDate] = useState(timeControl.moment.current)
 
-	useEffect(() => {
-		newDateRef.current = timeControl.moment
-	}, [timeControl.moment])
 	return (
 		<div>
 			<div className="d-flex ga-8 justify-center">
@@ -93,17 +91,14 @@ const TimeControlBar = ({ timeControl }: Props) => {
 										color="primary"
 										className="text-light bg-light-alpha-30 px-3 rounded-lg"
 										onClick={() => {
-											timeControl.goTo(newDateRef.current)
+											timeControl.goTo(calendarDate)
 										}}
 									>
 										Confirm
 									</IButton>
 								</div>
 								<ISeparator className="bg-light-alpha-20" />
-								<ICalendar
-									date={timeControl.moment}
-									onDateChange={(date) => (newDateRef.current = date)}
-								></ICalendar>
+								<ICalendar date={moment} onDateChange={setCalendarDate}></ICalendar>
 							</div>
 						</IPanel>
 					</IHoverElement>
