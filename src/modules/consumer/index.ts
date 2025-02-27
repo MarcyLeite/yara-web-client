@@ -1,80 +1,68 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { createBuffer, YaraBuffer } from './buffer'
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
+import { createLinkedBuffer, takeSnapshot, YaraBuffer } from './buffer'
 import { YaraView } from '../views/factory'
 import { YaraConnection, YaraDataMap } from './connection'
 
-const BACKWARD_MAX = 15
-const FORWARD_MAX = 30
-
-const shiftMoment = (dateTime: Date, shift: number) => new Date(dateTime.getTime() - shift * 1000)
+const shiftMoment = (dateTime: Date, shift: number) => new Date(dateTime.getTime() + shift * 1000)
 
 export const useConsumer = (
-	dateTime: Date,
+	momentRef: MutableRefObject<Date>,
 	view: YaraView | null,
 	connection: YaraConnection | null
 ) => {
-	const backwardSize = useRef(1)
-	const forwardSize = useRef(1)
-	const isTicking = useRef(true)
-
-	const momentRef = useRef(dateTime)
+	const backwardSize = useRef(20)
+	const forwardSize = useRef(20)
 
 	const buffer = useRef<YaraBuffer | null>(null)
+
+	const dataMapTimestamp = useRef(0)
 	const [dataMap, setDatamap] = useState<YaraDataMap>({})
 
-	const timeoutRef = useRef<NodeJS.Timeout>()
-
-	const tick = useCallback(async () => {
-		if (buffer.current) {
-			if (backwardSize.current < BACKWARD_MAX) {
-				backwardSize.current++
-			}
-
-			if (forwardSize.current < FORWARD_MAX) {
-				forwardSize.current++
-			}
-			buffer.current = await buffer.current.update({
-				moment: shiftMoment(momentRef.current, backwardSize.current),
-				sizeInSeconds: backwardSize.current + forwardSize.current,
-			})
-		}
-
-		if (isTicking.current) {
-			timeoutRef.current = setTimeout(tick, 500)
-		}
-	}, [])
-
-	const recreateBuffer = useCallback(async () => {
-		if (!view || view.dataIndexerList.length === 0 || !connection) {
+	const updateBuffer = useCallback(async () => {
+		if (!view || !connection) {
 			buffer.current = null
 			return
 		}
-		buffer.current = await createBuffer({
+
+		buffer.current = await createLinkedBuffer(
 			connection,
-			indexerList: view.dataIndexerList,
-			moment: shiftMoment(momentRef.current, backwardSize.current),
-			sizeInSeconds: backwardSize.current + forwardSize.current,
-		})
-	}, [view, connection])
+			view.dataIndexerList,
+			shiftMoment(momentRef.current, -backwardSize.current),
+			shiftMoment(momentRef.current, forwardSize.current)
+		)
+	}, [connection, view, momentRef])
+
+	const tickBufferTimeout = useRef<NodeJS.Timeout | null>(null)
+
+	const tickBuffer = useCallback(async () => {
+		await updateBuffer()
+
+		if (tickBufferTimeout.current) clearTimeout(tickBufferTimeout.current)
+		tickBufferTimeout.current = setTimeout(tickBuffer, 2000)
+	}, [updateBuffer])
+
+	const tickDatamap = useCallback(() => {
+		return setInterval(() => {
+			if (buffer.current) {
+				const snapshot = takeSnapshot(buffer.current, momentRef.current)
+				if (snapshot.timestamp === dataMapTimestamp.current) return
+
+				dataMapTimestamp.current = snapshot.timestamp
+				setDatamap(snapshot.map)
+			}
+		}, 250)
+	}, [momentRef])
 
 	useEffect(() => {
-		recreateBuffer()
-		tick()
+		tickBuffer()
+
+		const dataMapInterval = tickDatamap()
+
 		return () => {
-			clearTimeout(timeoutRef.current)
-			tick()
+			clearInterval(dataMapInterval)
+			if (tickBufferTimeout.current) clearTimeout(tickBufferTimeout.current)
 		}
-	}, [recreateBuffer, tick])
+	}, [tickBuffer, tickDatamap])
 
-	useEffect(() => {
-		if (!buffer.current) return
-		setDatamap(buffer.current.snapshot(dateTime))
-		momentRef.current = dateTime
-	}, [dateTime, setDatamap])
-
-	const setActive = useCallback((value: boolean) => {
-		isTicking.current = value
-	}, [])
-
-	return { dataMap, isActive: isTicking, setActive } as const
+	return { dataMap } as const
 }

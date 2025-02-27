@@ -73,7 +73,7 @@ export const createInfluxConnection = ({
 
 		for (const result of resultList) {
 			const resultTime = new Date(result._time as string).getTime()
-			timestamp = timestamp <= resultTime ? timestamp : resultTime
+			timestamp = timestamp >= resultTime ? timestamp : resultTime
 
 			map[result._measurement as string] = result
 		}

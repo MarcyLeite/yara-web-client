@@ -1,24 +1,23 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 export const useTimeControl = (initialDate: Date) => {
-	const [moment, setMoment] = useState(initialDate)
-	const [isPaused, setIsPaused] = useState(true)
+	const moment = useRef(initialDate)
 
+	const [isPaused, setPaused] = useState(true)
 	const [speed, setSpeed] = useState(1)
 
 	const goTo = useCallback((date: Date) => {
-		setMoment(date)
+		moment.current = date
 	}, [])
 	const goToward = useCallback(
 		(value: number) => {
-			const towardMoment = new Date(moment.getTime() + value * 1000)
+			const towardMoment = new Date(moment.current.getTime() + value * 1000)
 			goTo(towardMoment)
 		},
 		[moment, goTo]
 	)
-
 	const togglePlay = () => {
-		setIsPaused(!isPaused)
+		setPaused(!isPaused)
 	}
 
 	const prevFrame = useRef(0)
@@ -30,18 +29,14 @@ export const useTimeControl = (initialDate: Date) => {
 			prevFrame.current = currentFrame
 
 			if (!isPaused) {
-				setMoment(new Date(moment.getTime() + delta * speed))
-			}
-
-			const now = new Date()
-			if (moment.getTime() > now.getTime()) {
-				setSpeed(1)
-				setMoment(now)
+				const now = new Date()
+				if (moment.current.getTime() > now.getTime()) moment.current = now
+				else moment.current = new Date(moment.current.getTime() + delta * speed)
 			}
 
 			frameId.current = requestAnimationFrame(animate)
 		},
-		[moment, isPaused, speed]
+		[isPaused, speed]
 	)
 
 	useEffect(() => {

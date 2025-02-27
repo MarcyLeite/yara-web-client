@@ -30,9 +30,17 @@ const Component = (props: ComponentProps) => {
 
 	return groupBase.isGroup ? (
 		<group dispose={null}>
-			{groupBase.children.map((children, i) => (
-				<Component {...props} base={children} key={i} />
-			))}
+			{groupBase.children.map((children, i) => {
+				return (
+					<Component
+						setSelected={setSelected}
+						view={view}
+						colorMap={colorMap}
+						base={children}
+						key={i}
+					/>
+				)
+			})}
 		</group>
 	) : (
 		<mesh
