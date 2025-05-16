@@ -1,7 +1,7 @@
 import 'mocha'
 import * as chai from 'chai'
 import 'sinon'
-import "chai/register-should";
+import 'chai/register-should'
 
 declare global {
 	const expect = chai.expect
