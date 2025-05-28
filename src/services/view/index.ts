@@ -1,0 +1,119 @@
+import type { DataMap } from '../buffer'
+import {
+	createColorMapper,
+	type ColorMapper,
+	type ColorMapperOptions,
+	type HexColor,
+} from './color-mapper'
+
+/**
+ * Configuration objects for views
+ */
+type ViewComponentConfig = {
+	/**
+	 * @property name of Object3D
+	 */
+	id: string
+	/**
+	 * @property name to be displayed in app
+	 */
+	display?: string
+	/**
+	 * @property hide object in app
+	 */
+	isHidden?: boolean
+	/**
+	 * @property list of indexers that will be used to calculate color
+	 */
+	indexerList?: string[]
+}
+
+/**
+ * Default view configuration object
+ */
+export type ViewConfig = {
+	/**
+	 * @property name that will be displayed in app
+	 */
+	display: string
+	/**
+	 * @property configuration object for mapper
+	 */
+	mapper: ColorMapperOptions
+	/**
+	 * @property list of component configuration
+	 */
+	components: ViewComponentConfig[]
+}
+
+/**
+ * Object reference that stores Object3D id and color string
+ */
+type ComponentColorMap = Record<string, HexColor>
+
+/**
+ * Stores data of current selected view to be used in page
+ */
+export type View = {
+	/**
+	 * @property string to be displayed in app
+	 */
+	display: ViewConfig['display']
+	/**
+	 * @property interactive component properties
+	 */
+	components: {
+		/**
+		 * @property string list of Object3D ids
+		 */
+		hidden: string[]
+		/**
+		 *
+		 * @param dataMap Generic data. Usually setted by connection and current time
+		 * @returns list of component-color map
+		 */
+		getColorMap: (dataMap: DataMap) => ComponentColorMap
+	}
+	/**
+	 * @property list of indexers that will define connection queries
+	 */
+	dataIndexerList: string[]
+}
+
+export const createView = (config: ViewConfig): View => {
+	const dataIndexerList: string[] = []
+	const hiddenComponentList: string[] = []
+
+	for (const { id, indexerList, isHidden } of config.components) {
+		if (indexerList) {
+			dataIndexerList.push(...indexerList)
+		}
+		if (isHidden) {
+			hiddenComponentList.push(id)
+		}
+	}
+
+	const mapper: ColorMapper = createColorMapper(config.mapper)
+
+	const getColorMap = (inputDataSet: DataMap) => {
+		const colorMap: ComponentColorMap = {}
+		for (const componentConfig of config.components) {
+			if (componentConfig.isHidden || !componentConfig.indexerList) continue
+
+			const measuarent = componentConfig.indexerList[0]
+
+			colorMap[componentConfig.id] = mapper.getColor(inputDataSet[measuarent]?.eng ?? null)
+		}
+
+		return colorMap
+	}
+
+	return {
+		display: config.display,
+		components: {
+			hidden: hiddenComponentList,
+			getColorMap,
+		},
+		dataIndexerList,
+	}
+}
