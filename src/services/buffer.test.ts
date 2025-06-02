@@ -82,4 +82,15 @@ describe('[Service] Buffer', () => {
 		buffer.update({ moment: new Date(initDate) })
 		strategySpy.callCount.should.equal(1)
 	})
+
+	it('Should get buffer length', async () => {
+		const initDate = createDateFromShift(5)
+		const buffer = await createBuffer({
+			strategy: bufferStrategy,
+			size: 30000,
+			moment: initDate,
+		})
+
+		buffer.length.should.equal(120)
+	})
 })

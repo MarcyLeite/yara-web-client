@@ -48,6 +48,10 @@ export type Buffer = {
 	 * List of snapshot in buffer
 	 */
 	snapshotList: Snapshot[]
+	/**
+	 * Snapshot list length
+	 */
+	length: number
 }
 
 export const updateBuffer = async (
@@ -89,7 +93,9 @@ export const updateBuffer = async (
 		const time = moment.getTime()
 
 		for (const snapshot of snapshotList) {
-			if (snapshot.timestamp > time) break
+			if (snapshot.timestamp > time) {
+				break
+			}
 			const data = Object.assign({}, snapshot.data)
 
 			const indexer = data['_measurement'] as string
@@ -111,15 +117,20 @@ export const updateBuffer = async (
 		update,
 		getDatamap,
 		snapshotList,
+		length: snapshotList.length,
 	}
 
 	return buffer
 }
 
 export const createBuffer = async (options: BufferOptions): Promise<Buffer> => {
+	options.size = options.size ?? 1
 	const { strategy, moment, size } = options
 	const finalDate = new Date(moment.getTime() + size)
-	const snapshotList = await strategy.update({ from: moment, to: finalDate })
+	const snapshotList = await strategy.update({
+		from: moment,
+		to: finalDate,
+	})
 
 	return updateBuffer(options, {}, snapshotList)
 }
