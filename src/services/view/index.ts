@@ -49,7 +49,7 @@ export type ViewConfig = {
 /**
  * Object reference that stores Object3D id and color string
  */
-type ComponentColorMap = Record<string, HexColor>
+export type ComponentColorMap = Record<string, HexColor>
 
 /**
  * Stores data of current selected view to be used in page

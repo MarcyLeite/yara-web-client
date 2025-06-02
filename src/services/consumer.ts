@@ -22,8 +22,6 @@ export type Consumer = {
 	update: (moment: Date) => Promise<Consumer>
 }
 
-const BUFFER_SIZE = 120000
-
 const updateConsumer = (oldBuffer: Buffer) => async (moment: Date) => {
 	const buffer = await oldBuffer.update({ moment })
 
@@ -35,11 +33,15 @@ const updateConsumer = (oldBuffer: Buffer) => async (moment: Date) => {
 	return consumer
 }
 
-export const createConsumer = async (bufferStrategy: BufferStrategy, initialDate: Date) => {
+export const createConsumer = async (
+	bufferStrategy: BufferStrategy,
+	initialDate: Date,
+	bufferSize: number
+) => {
 	const moment = initialDate
 	const buffer = await createBuffer({
 		strategy: bufferStrategy,
-		size: BUFFER_SIZE,
+		size: bufferSize,
 		moment,
 	})
 

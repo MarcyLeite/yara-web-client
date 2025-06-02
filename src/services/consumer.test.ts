@@ -8,9 +8,11 @@ import {
 import { createBufferStrategy } from './buffer-strategy'
 import { createConsumer } from './consumer'
 
+const BUFFER_SIZE = 60000
+
 const { mockConnection, mockSnapshotList } = createMockConnection()
 const bufferStrategy = createBufferStrategy(mockConnection, ['A', 'B', 'C', 'D'])
-const consumer = await createConsumer(bufferStrategy, INITIAL_DATE)
+const consumer = await createConsumer(bufferStrategy, INITIAL_DATE, BUFFER_SIZE)
 
 describe('[Service] Consumer', () => {
 	const bufferSpy = Sinon.spy(bufferStrategy, 'update')
@@ -20,11 +22,11 @@ describe('[Service] Consumer', () => {
 	})
 
 	it('Should create consumer', async () => {
-		await createConsumer(bufferStrategy, INITIAL_DATE)
+		await createConsumer(bufferStrategy, INITIAL_DATE, BUFFER_SIZE)
 		bufferSpy.callCount.should.equal(1)
 	})
 
-	it('Should getDatamap from time in buffer', () => {
+	it('Should get datamap from time in buffer', () => {
 		const datamapDate = createDateFromShift(25)
 		const datamap = consumer.getDatamap(datamapDate)
 
