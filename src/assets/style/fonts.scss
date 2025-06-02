@@ -1,0 +1,41 @@
+@mixin main {
+	& {
+		@font-face {
+			font-family: 'Roboto';
+			font-style: normal;
+			font-weight: normal;
+			src: url(../fonts/Roboto-Regular.ttf);
+		}
+		@font-face {
+			font-family: 'Roboto';
+			font-style: italic;
+			font-weight: normal;
+			src: url(../fonts/Roboto-Italic.ttf);
+		}
+		@font-face {
+			font-family: 'Roboto';
+			font-style: bold;
+			font-weight: bold;
+			src: url(../fonts/Roboto-Bold.ttf);
+		}
+
+		@font-face {
+			font-family: 'Ubuntu';
+			font-style: normal;
+			font-weight: normal;
+			src: url(../fonts/Ubuntu-Regular.ttf);
+		}
+		@font-face {
+			font-family: 'Ubuntu';
+			font-style: italic;
+			font-weight: normal;
+			src: url(../fonts/Ubuntu-Italic.ttf);
+		}
+		@font-face {
+			font-family: 'Ubuntu';
+			font-style: bold;
+			font-weight: bold;
+			src: url(../fonts/Ubuntu-Bold.ttf);
+		}
+	}
+}

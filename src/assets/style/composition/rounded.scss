@@ -1,0 +1,19 @@
+$round-map: (
+	'0': 0px,
+	'sm': 2px,
+	'lg': 8px,
+	'xl': 24px,
+	'pill': 9999px,
+	'circle': 50%,
+);
+
+@mixin main {
+	.rounded {
+		border-radius: 4px;
+	}
+	@each $index, $radius in $round-map {
+		.rounded-#{$index} {
+			border-radius: $radius;
+		}
+	}
+}

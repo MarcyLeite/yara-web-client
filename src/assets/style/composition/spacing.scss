@@ -1,0 +1,50 @@
+@use 'sass:list';
+
+@function pre($l) {
+	@return list.nth($l, 1);
+}
+
+@function att($l) {
+	@return list.nth($l, 2);
+}
+
+@mixin main {
+	$modes: (
+		'm': 'margin',
+		'p': 'padding',
+	);
+	$directions: (
+		't': 'top',
+		'b': 'bottom',
+		'l': 'left',
+		'r': 'right',
+	);
+	@for $i from 0 through 16 {
+		$space: var(--space-#{$i});
+		@each $mode-prefix, $mode-attr in $modes {
+			@each $direction-prefix, $direction-attr in $directions {
+				.#{$mode-prefix}#{$direction-prefix}-#{$i} {
+					#{$mode-attr}-#{$direction-attr}: #{$space};
+				}
+			}
+			.#{$mode-prefix}a-#{$i} {
+				#{$mode-attr}-top: #{$space};
+				#{$mode-attr}-bottom: #{$space};
+				#{$mode-attr}-left: #{$space};
+				#{$mode-attr}-right: #{$space};
+			}
+			.#{$mode-prefix}x-#{$i} {
+				#{$mode-attr}-left: #{$space};
+				#{$mode-attr}-right: #{$space};
+			}
+			.#{$mode-prefix}y-#{$i} {
+				#{$mode-attr}-top: #{$space};
+				#{$mode-attr}-bottom: #{$space};
+			}
+		}
+
+		.ga-#{$i} {
+			gap: #{$space};
+		}
+	}
+}

@@ -1,0 +1,21 @@
+@mixin main {
+	button {
+		all: unset;
+		display: flex;
+		cursor: pointer;
+		user-select: none;
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
+	textarea,
+	input {
+		display: inline;
+		resize: none;
+		background: none;
+		border: none;
+		outline: none;
+	}
+}

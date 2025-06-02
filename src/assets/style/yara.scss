@@ -1,0 +1,17 @@
+@use 'palette';
+@use 'composition/index' as composition;
+@use 'reset';
+@use 'fonts';
+
+.yara {
+	@include fonts.main;
+	@include reset.main;
+	@include palette.main;
+	@include composition.main;
+
+	& {
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+}

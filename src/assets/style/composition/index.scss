@@ -1,0 +1,21 @@
+@use 'position';
+@use 'size';
+@use 'events';
+@use 'spacing';
+@use 'flex';
+@use 'rounded';
+@use 'colors';
+@use 'text';
+@use 'elevation';
+
+@mixin main {
+	@include events.main;
+	@include position.main;
+	@include size.main;
+	@include spacing.main;
+	@include flex.main;
+	@include rounded.main;
+	@include colors.main;
+	@include text.main;
+	@include elevation.main;
+}

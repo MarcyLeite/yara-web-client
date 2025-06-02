@@ -1,0 +1,22 @@
+$colors: (
+	'primary': #f0acff,
+	'text': #000000,
+	'light': #ffffff,
+	'bg': #ffffff,
+	'panel': #222222,
+	'editor': #c5cae9,
+	'not-live': #000000,
+	'panel-border': #dddddd,
+);
+
+@mixin main {
+	& {
+		@for $i from 0 through 16 {
+			--space-#{$i}: #{$i * 4}px;
+		}
+
+		@each $index, $color in $colors {
+			--color-#{$index}: #{$color};
+		}
+	}
+}
