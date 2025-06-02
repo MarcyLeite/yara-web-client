@@ -1,11 +1,10 @@
 import type { DataMap } from '@/services/buffer'
-import { createBufferStrategy, type BufferStrategy } from '@/services/buffer-strategy'
+import { createBufferStrategy } from '@/services/buffer-strategy'
 import type { Config } from '@/services/configuration'
 import { createConnection, type Connection } from '@/services/connection'
 import { createConsumer, type Consumer } from '@/services/consumer'
 import { createView, type ComponentColorMap, type View } from '@/services/view'
 import { defineStore } from 'pinia'
-import { ref, watch } from 'vue'
 
 type Optional<T extends unknown> = T | null
 
