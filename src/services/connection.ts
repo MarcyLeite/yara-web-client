@@ -1,3 +1,11 @@
+import { createConnectionInfluxDB, type ConnectionInfluxDBConfig } from './connection-influxdb'
+
+export type ConnectionConfigType = {
+	type: string
+}
+
+export type ConnectionConfig = ConnectionInfluxDBConfig
+
 /**
  * Unknown object returned by database.
  * @exemple
@@ -38,4 +46,12 @@ export type Connection = {
 	 * @returns Snapshot of objects that changed in this range with the moment they change.
 	 */
 	getDataFromRange: (date1: Date, date2: Date, indexerList: string[]) => Promise<Snapshot[]>
+}
+
+export const createConnection = (config: ConnectionConfig) => {
+	if (config.type === 'influxdb') {
+		return createConnectionInfluxDB(config)
+	}
+
+	throw new Error('Error')
 }
