@@ -39,11 +39,18 @@ export type Buffer = {
 	 */
 	update: (options: Partial<BufferOptions>) => Promise<Buffer>
 	/**
-	 * It will return a ObjectMap if of all last registries from given moment.
+	 * It will return a ObjectMap of all last registries from given moment.
 	 * @param moment Reference date for initial values
 	 * @returns ObjectMap
 	 */
-	getDatamap: (moment: Date) => DataMap
+	getSnapshot: (moment: Date) => DataMap
+	/**
+	 * It will return a ObjectMap only values between to given momentns.
+	 * @param moment1 Reference date for initial values
+	 * @param moment2 Reference date for final values
+	 * @returns ObjectMap
+	 */
+	getDifference: (moment1: Date, moment2: Date) => DataMap
 	/**
 	 * List of snapshot in buffer
 	 */
@@ -52,6 +59,23 @@ export type Buffer = {
 	 * Snapshot list length
 	 */
 	length: number
+}
+
+const addToData = (snapshot: Snapshot, dataMap: DataMap) => {
+	const data = Object.assign({}, snapshot.data)
+
+	const indexer = data['_measurement'] as string
+	const prev = dataMap[indexer]
+
+	if (!prev) {
+		dataMap[indexer] = data
+		return false
+	}
+
+	const newData = mergeData(prev, data)
+	dataMap[indexer] = newData
+
+	return true
 }
 
 export const updateBuffer = async (
@@ -74,6 +98,7 @@ export const updateBuffer = async (
 	}
 
 	const finalDate = new Date(moment.getTime() + size)
+
 	const hasBufferChanges =
 		moment.getTime() !== originalOptions.moment.getTime() || size !== originalOptions.size
 	const snapshotList = hasBufferChanges
@@ -88,7 +113,7 @@ export const updateBuffer = async (
 		return updateBuffer(originalOptions, options, snapshotList)
 	}
 
-	const getDatamap = (moment: Date) => {
+	const getSnapshot = (moment: Date) => {
 		const dataMap: DataMap = {}
 		const time = moment.getTime()
 
@@ -96,18 +121,27 @@ export const updateBuffer = async (
 			if (snapshot.timestamp > time) {
 				break
 			}
-			const data = Object.assign({}, snapshot.data)
 
-			const indexer = data['_measurement'] as string
-			const prev = dataMap[indexer]
+			addToData(snapshot, dataMap)
+		}
 
-			if (!prev) {
-				dataMap[indexer] = data
+		return dataMap
+	}
+
+	const getDifference = (moment1: Date, moment2: Date) => {
+		const dataMap: DataMap = {}
+		const start = moment1.getTime()
+		const end = moment2.getTime()
+
+		for (const snapshot of snapshotList) {
+			if (snapshot.timestamp < start) {
 				continue
 			}
+			if (snapshot.timestamp > end) {
+				break
+			}
 
-			const newData = mergeData(prev, data)
-			dataMap[indexer] = newData
+			addToData(snapshot, dataMap)
 		}
 
 		return dataMap
@@ -115,7 +149,8 @@ export const updateBuffer = async (
 
 	const buffer: Buffer = {
 		update,
-		getDatamap,
+		getSnapshot,
+		getDifference,
 		snapshotList,
 		length: snapshotList.length,
 	}

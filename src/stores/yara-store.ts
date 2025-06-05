@@ -24,6 +24,14 @@ export const useYaraStore = defineStore('yara-store', () => {
 		selectedViewIndex.value = index
 	}
 	const setMoment = (moment: Date) => {
+		if (!view.value || !consumer.value || moment.getTime() === currentMoment.value.getTime()) {
+			return
+		}
+		const _dataMap = consumer.value.getDifference(currentMoment.value, moment)
+
+		dataMap.value = _dataMap
+		colorMap.value = view.value.components.getColorMap(_dataMap)
+
 		currentMoment.value = moment
 	}
 
@@ -54,33 +62,37 @@ export const useYaraStore = defineStore('yara-store', () => {
 		const _view = createView(config.value.views[selectedViewIndex.value])
 		const bufferStrategy = createBufferStrategy(connection.value, _view.dataIndexerList)
 		const _consumer = await createConsumer(bufferStrategy, currentMoment.value, BUFFER_SIZE)
+		const _dataMap = _consumer.getSnapshot(currentMoment.value)
 
 		view.value = _view
 		consumer.value = _consumer
+		dataMap.value = _dataMap
 	})
+
+	let timout: number | undefined
 
 	const consumerLoopCallback = async () => {
 		if (!consumer.value) {
-			setTimeout(consumerLoopCallback, 250)
+			timout = setTimeout(consumerLoopCallback, 250)
 			return
 		}
 
 		consumer.value = await consumer.value.update(currentMoment.value)
-		setTimeout(consumerLoopCallback, 250)
+		timout = setTimeout(consumerLoopCallback, 250)
 	}
 
-	const datamapLoopCallback = () => {
-		if (!view.value || !consumer.value) {
-			return
-		}
-
-		const _dataMap = consumer.value.getDatamap(currentMoment.value)
-		dataMap.value = _dataMap
-		colorMap.value = view.value.components.getColorMap(_dataMap)
+	const loop = {
+		get status() {
+			return timout === null ? 'OFF' : 'ON'
+		},
+		start: () => {
+			consumerLoopCallback()
+		},
+		stop: () => {
+			clearTimeout(timout)
+			timout = undefined
+		},
 	}
 
-	setInterval(datamapLoopCallback, 250)
-	consumerLoopCallback()
-
-	return { loadingMessage, currentMoment, dataMap, colorMap, setConfig, setView, setMoment }
+	return { loadingMessage, currentMoment, dataMap, colorMap, setConfig, setView, setMoment, loop }
 })

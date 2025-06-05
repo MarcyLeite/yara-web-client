@@ -10,6 +10,7 @@ import Sinon from 'sinon'
 
 describe('[Service] Buffer', () => {
 	const { mockConnection } = createMockConnection()
+
 	const bufferStrategy = createBufferStrategy(mockConnection, ['A', 'B', 'C', 'D'])
 
 	const strategySpy = Sinon.spy(bufferStrategy, 'update')
@@ -48,7 +49,7 @@ describe('[Service] Buffer', () => {
 		compareSnapshotInRange(buffer.snapshotList, mockConnection, initDate, finalDate)
 	})
 
-	it('Should gerenerate datamap from given time', async () => {
+	it('Should gerenerate snapshot from given time', async () => {
 		const initDate = createDateFromShift(5)
 		const datamapDate = createDateFromShift(8)
 		const buffer = await createBuffer({
@@ -57,7 +58,10 @@ describe('[Service] Buffer', () => {
 			moment: initDate,
 		})
 
-		const dataMap = buffer.getDatamap(datamapDate)
+		const dataMap = buffer.getSnapshot(datamapDate)
+
+		const dataC = dataMap['C']
+		;(dataC._time as string).should.equal('1997-12-24T12:00:06.000Z')
 
 		compareDataMap(buffer.snapshotList, dataMap['A'], datamapDate)
 		compareDataMap(buffer.snapshotList, dataMap['B'], datamapDate)
@@ -91,6 +95,55 @@ describe('[Service] Buffer', () => {
 			moment: initDate,
 		})
 
-		buffer.length.should.equal(120)
+		buffer.length.should.equal(104)
+	})
+
+	it('Should get difference from given range', async () => {
+		const initDate = createDateFromShift(5)
+		const buffer = await createBuffer({
+			strategy: bufferStrategy,
+			size: 60000,
+			moment: initDate,
+		})
+
+		const datamapInitDate = createDateFromShift(7)
+		const datamapEndDate = createDateFromShift(8)
+
+		const dataMap = buffer.getDifference(datamapInitDate, datamapEndDate)
+
+		compareDataMap(buffer.snapshotList, dataMap['A'], datamapEndDate)
+		compareDataMap(buffer.snapshotList, dataMap['B'], datamapEndDate)
+		should.not.exist(dataMap['C'])
+		compareDataMap(buffer.snapshotList, dataMap['D'], datamapEndDate)
+	})
+	it('Should include first values from difference', async () => {
+		const initDate = createDateFromShift(5)
+		const buffer = await createBuffer({
+			strategy: bufferStrategy,
+			size: 60000,
+			moment: initDate,
+		})
+
+		const datamapInitDate = createDateFromShift(6)
+		const datamapEndDate = createDateFromShift(8)
+
+		const dataMap = buffer.getDifference(datamapInitDate, datamapEndDate)
+
+		compareDataMap(buffer.snapshotList, dataMap['C'], datamapEndDate)
+	})
+	it('Should not include first values from difference', async () => {
+		const initDate = createDateFromShift(5)
+		const buffer = await createBuffer({
+			strategy: bufferStrategy,
+			size: 60000,
+			moment: initDate,
+		})
+
+		const datamapInitDate = createDateFromShift(7)
+		const datamapEndDate = createDateFromShift(9)
+
+		const dataMap = buffer.getDifference(datamapInitDate, datamapEndDate)
+
+		compareDataMap(buffer.snapshotList, dataMap['C'], datamapEndDate)
 	})
 })

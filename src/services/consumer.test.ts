@@ -28,12 +28,24 @@ describe('[Service] Consumer', () => {
 
 	it('Should get datamap from time in buffer', () => {
 		const datamapDate = createDateFromShift(25)
-		const datamap = consumer.getDatamap(datamapDate)
+		const datamap = consumer.getSnapshot(datamapDate)
 
 		compareDataMap(mockSnapshotList, datamap['A'], datamapDate)
 		compareDataMap(mockSnapshotList, datamap['B'], datamapDate)
 		compareDataMap(mockSnapshotList, datamap['C'], datamapDate)
 		compareDataMap(mockSnapshotList, datamap['D'], datamapDate)
+	})
+
+	it('Should get difference from given range', async () => {
+		const datamapInitDate = createDateFromShift(7)
+		const datamapEndDate = createDateFromShift(8)
+
+		const dataMap = consumer.getDifference(datamapInitDate, datamapEndDate)
+
+		compareDataMap(mockSnapshotList, dataMap['A'], datamapEndDate)
+		compareDataMap(mockSnapshotList, dataMap['B'], datamapEndDate)
+		should.not.exist(dataMap['C'])
+		compareDataMap(mockSnapshotList, dataMap['D'], datamapEndDate)
 	})
 
 	it('Should update consumer using strategy', async () => {

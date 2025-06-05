@@ -7,11 +7,19 @@ import type { Buffer } from './buffer'
  */
 export type Consumer = {
 	/**
-	 * get dataMap from buffer on setted moment.
+	 * get dataMap from all last values on given moment.
 	 * @param moment get values until this Date
 	 * @returns DataMap
 	 */
-	getDatamap: (moment: Date) => DataMap
+	getSnapshot: (moment: Date) => DataMap
+
+	/**
+	 * get dataMap values on given range.
+	 * @param moment1 range start
+	 * @param moment2 range end
+	 * @returns DataMap
+	 */
+	getDifference: (moment1: Date, moment2: Date) => DataMap
 
 	/**
 	 * @async
@@ -26,7 +34,8 @@ const updateConsumer = (oldBuffer: Buffer) => async (moment: Date) => {
 	const buffer = await oldBuffer.update({ moment })
 
 	const consumer: Consumer = {
-		getDatamap: (moment) => buffer.getDatamap(moment),
+		getSnapshot: buffer.getSnapshot,
+		getDifference: buffer.getDifference,
 		update: updateConsumer(buffer),
 	}
 
