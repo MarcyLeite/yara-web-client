@@ -7,6 +7,7 @@ import { loadModel } from './load-model'
 import type { EffectComposer, OrbitControls } from 'three/examples/jsm/Addons.js'
 import { createResizeObserver } from './resize-observer'
 import { addInteraction, type InteractionCallbacks } from './interactions'
+import type { ComponentColorMap } from '../view'
 
 const extractSize = (rootElement: HTMLElement) => {
 	const width = rootElement.clientWidth
@@ -47,6 +48,17 @@ export const createYara3D = async (
 	const resizeObserver = createResizeObserver(rootElement, animate, sceneElements)
 	const interaction = addInteraction(rootElement, interactionsCallback, sceneElements, effects)
 
+	const paint = (componentColorMap?: ComponentColorMap) => {
+		if (!componentColorMap) return
+		for (const [name, color] of Object.entries(componentColorMap)) {
+			const object3d = scene.getObjectByName(name) as THREE.Mesh
+			if (!object3d) continue
+			const material = object3d.material as THREE.MeshStandardMaterial
+
+			material.color = new THREE.Color(color)
+		}
+	}
+
 	const dispose = () => {
 		renderer.dispose()
 		orbitControls.dispose()
@@ -55,7 +67,7 @@ export const createYara3D = async (
 		resizeObserver.disconnect()
 	}
 
-	return { renderer, fps, resizeObserver, dispose }
+	return { renderer, fps, paint, resizeObserver, dispose }
 }
 
 export type Yara3D = Awaited<ReturnType<typeof createYara3D>>

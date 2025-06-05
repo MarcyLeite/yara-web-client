@@ -3,7 +3,7 @@
 		<overlay>
 			<datamap-visualizer :store="yaraStore" />
 		</overlay>
-		<three-js @select="yaraStore.setSelectedObject" />
+		<three-js :store="yaraStore" @select="yaraStore.setSelectedObject" />
 	</div>
 </template>
 
@@ -41,7 +41,7 @@ onMounted(() => {
 					},
 					{
 						id: 'Body2',
-						indexerList: ['A', 'B'],
+						indexerList: ['B', 'A'],
 					},
 				],
 			},

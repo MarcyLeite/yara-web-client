@@ -4,10 +4,19 @@
 
 <script lang="ts" setup>
 import { createYara3D, type Yara3D } from '@/services/scene3D/yara-3d'
+import type { YaraStore } from '@/stores/yara-store'
+import { storeToRefs } from 'pinia'
 import type { Object3D } from 'three'
 
 const threeJSRoot = useTemplateRef<HTMLDivElement>('threejs-root')
 const yara3DRef = ref<Yara3D | null>()
+
+type Props = {
+	store: YaraStore
+}
+
+const { store } = defineProps<Props>()
+const { colorMap } = storeToRefs(store)
 
 type Emits = {
 	select: [object: Object3D | null]
@@ -18,6 +27,11 @@ const emit = defineEmits<Emits>()
 const onSelectCallback = (object3d: Object3D | null) => {
 	emit('select', object3d)
 }
+
+watch([colorMap], () => {
+	if (!yara3DRef.value || !colorMap.value) return
+	yara3DRef.value.paint(colorMap.value)
+})
 
 onMounted(async () => {
 	const rootElement = threeJSRoot.value
