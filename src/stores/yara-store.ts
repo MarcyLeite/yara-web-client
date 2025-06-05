@@ -5,6 +5,7 @@ import { createConnection, type Connection } from '@/services/connection'
 import { createConsumer, type Consumer } from '@/services/consumer'
 import { createView, type ComponentColorMap, type View } from '@/services/view'
 import { defineStore } from 'pinia'
+import type { Object3D } from 'three'
 
 type Optional<T extends unknown> = T | null
 
@@ -16,6 +17,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 	const config = ref<Optional<Config>>(null)
 	const selectedViewIndex = ref<Optional<number>>(null)
 	const currentMoment = ref(initialDate)
+	const selectedObject = ref<Optional<Object3D>>(null)
 
 	const setConfig = (_config: Config) => {
 		config.value = _config
@@ -35,6 +37,10 @@ export const useYaraStore = defineStore('yara-store', () => {
 		currentMoment.value = moment
 	}
 
+	const setSelectedObject = (object3d: Object3D | null) => {
+		selectedObject.value = object3d
+	}
+
 	const connection = ref<Optional<Connection>>(null)
 	const view = ref<Optional<View>>(null)
 	const consumer = ref<Optional<Consumer>>(null)
@@ -42,6 +48,19 @@ export const useYaraStore = defineStore('yara-store', () => {
 	const loadingMessage = ref<Optional<string>>(null)
 	const colorMap = ref<Optional<ComponentColorMap>>(null)
 	const dataMap = ref<Optional<DataMap>>(null)
+
+	const selectedDataMap = ref<Optional<DataMap>>(null)
+
+	watch([dataMap, selectedObject], () => {
+		if (!dataMap.value || !selectedObject.value || !view.value) {
+			selectedDataMap.value = null
+			return
+		}
+		selectedDataMap.value = view.value.components.extactFromDataMap(
+			selectedObject.value.name,
+			dataMap.value
+		)
+	})
 
 	watch([config], () => {
 		if (!config.value) {
@@ -94,5 +113,19 @@ export const useYaraStore = defineStore('yara-store', () => {
 		},
 	}
 
-	return { loadingMessage, currentMoment, dataMap, colorMap, setConfig, setView, setMoment, loop }
+	return {
+		loadingMessage,
+		currentMoment,
+		dataMap,
+		selectedObject,
+		selectedDataMap,
+		colorMap,
+		setConfig,
+		setView,
+		setMoment,
+		setSelectedObject,
+		loop,
+	}
 })
+
+export type YaraStore = ReturnType<typeof useYaraStore>

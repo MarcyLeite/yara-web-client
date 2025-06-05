@@ -62,4 +62,16 @@ describe('[Service] View', () => {
 		hiddenComponentList.should.have.length(1)
 		hiddenComponentList[0].should.equal('2')
 	})
+
+	it('Should extract datamap from object', () => {
+		const exclusiveDataMap = view.components.extactFromDataMap('0', dataMap)
+
+		should.exist(exclusiveDataMap)
+		if (!exclusiveDataMap) {
+			return
+		}
+
+		exclusiveDataMap.should.have.property('foo')
+		exclusiveDataMap.should.not.have.property('bar')
+	})
 })

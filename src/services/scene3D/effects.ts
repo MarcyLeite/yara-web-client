@@ -16,14 +16,16 @@ export type Effects = {
 
 const createOutlinePass = (
 	{ boxSize, camera, scene }: EffectsProps,
-	color: THREE.ColorRepresentation
+	color: THREE.ColorRepresentation,
+	strength = 2,
+	glow = 1
 ) => {
 	const outlinePass = new OutlinePass(boxSize, scene, camera)
 	outlinePass.overlayMaterial.blending = 5
 	outlinePass.clear = false
 
-	outlinePass.edgeStrength = 2
-	outlinePass.edgeGlow = 1
+	outlinePass.edgeStrength = strength
+	outlinePass.edgeGlow = glow
 
 	outlinePass.visibleEdgeColor = new THREE.Color(color)
 	outlinePass.hiddenEdgeColor = new THREE.Color(color)
@@ -41,11 +43,11 @@ export const createEffects = (props: EffectsProps) => {
 
 	composer.addPass(renderPass)
 
-	const selectedPass = createOutlinePass(props, 0xff00000)
 	const hoverPass = createOutlinePass(props, 0xbbbbff)
+	const selectedPass = createOutlinePass(props, 0xff00000)
 
-	composer.addPass(selectedPass)
 	composer.addPass(hoverPass)
+	composer.addPass(selectedPass)
 
 	return { composer, effects: { selectedPass, hoverPass } }
 }

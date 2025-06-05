@@ -1,16 +1,17 @@
 <template>
-	<div class="yara">
-		<three-js />
+	<div class="yara p-relative">
+		<overlay>
+			<datamap-visualizer :store="yaraStore" />
+		</overlay>
+		<three-js @select="yaraStore.setSelectedObject" />
 	</div>
 </template>
 
 <script setup lang="ts">
 import '@/assets/style/yara.scss'
 import { useYaraStore } from '@/stores/yara-store'
-import { storeToRefs } from 'pinia'
 
 const yaraStore = useYaraStore()
-const yaraStoreRef = storeToRefs(yaraStore)
 
 const interval = setInterval(() => {
 	yaraStore.setMoment(new Date(yaraStore.currentMoment.getTime() + 1000))
@@ -35,8 +36,12 @@ onMounted(() => {
 				},
 				components: [
 					{
-						id: 'foo',
+						id: 'Body3',
 						indexerList: ['C'],
+					},
+					{
+						id: 'Body2',
+						indexerList: ['A', 'B'],
 					},
 				],
 			},
@@ -52,6 +57,4 @@ onUnmounted(() => {
 	yaraStore.loop.stop()
 	yaraStore.$dispose()
 })
-
-watch([yaraStoreRef.dataMap], () => {})
 </script>

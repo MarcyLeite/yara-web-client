@@ -2,8 +2,15 @@ import * as THREE from 'three'
 import type { Yara3DElements } from './yara-3d'
 import type { Effects } from './effects'
 
+export type OnSelectCallback = (object3d: THREE.Object3D | null) => void
+
+export type InteractionCallbacks = {
+	onSelectCallback?: OnSelectCallback
+}
+
 export const addInteraction = (
 	rootElement: HTMLElement,
+	{ onSelectCallback }: InteractionCallbacks,
 	{ scene, camera }: Yara3DElements,
 	{ selectedPass, hoverPass }: Effects
 ) => {
@@ -31,16 +38,12 @@ export const addInteraction = (
 		if (timout) clearTimeout(timout)
 
 		const intersect = getIntesection(event)
-		if (!intersect) {
-			selectedObject = null
-			selectedPass.selectedObjects = []
-			return
-		}
+		selectedObject = intersect?.object ?? null
 
-		selectedObject = intersect.object
-
-		selectedPass.selectedObjects = [selectedObject]
+		selectedPass.selectedObjects = selectedObject ? [selectedObject] : []
 		hoverPass.selectedObjects = []
+
+		onSelectCallback?.call({}, selectedObject)
 	}
 
 	const onHover = (event: MouseEvent) => {
@@ -51,7 +54,6 @@ export const addInteraction = (
 			hoverPass.selectedObjects = []
 			return
 		}
-		if (intersect.object === selectedPass.selectedObjects[0]) return
 
 		hoverPass.selectedObjects = [intersect.object]
 	}
@@ -59,8 +61,9 @@ export const addInteraction = (
 	const onMouseDown = () => {
 		isDragging = false
 		timout = setTimeout(() => {
+			hoverPass.selectedObjects = []
 			isDragging = true
-		}, 100)
+		}, 200)
 	}
 
 	rootElement.addEventListener('mousedown', onMouseDown)

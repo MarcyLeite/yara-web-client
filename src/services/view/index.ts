@@ -67,6 +67,15 @@ export type View = {
 		 * @property string list of Object3D ids
 		 */
 		hidden: string[]
+
+		/**
+		 * Extracts only related data from configured object3D
+		 * @param componentId object3D component id
+		 * @param dataMap original datamap
+		 * @returns filtered datamap with only component indexers or null if no componentId found
+		 */
+		extactFromDataMap: (componentId: string, dataMap: DataMap) => DataMap | null
+
 		/**
 		 *
 		 * @param dataMap Generic data. Usually setted by connection and current time
@@ -95,6 +104,20 @@ export const createView = (config: ViewConfig): View => {
 
 	const mapper: ColorMapper = createColorMapper(config.mapper)
 
+	const extactFromDataMap = (componentId: string, dataMap: DataMap) => {
+		const componentConfig = config.components.find((component) => component.id === componentId)
+		if (!componentConfig) return null
+
+		const exclusiveDataMap: DataMap = {}
+		for (const indexer of componentConfig.indexerList ?? []) {
+			const values = dataMap[indexer]
+			if (!values) continue
+			exclusiveDataMap[indexer] = values
+		}
+
+		return exclusiveDataMap
+	}
+
 	const getColorMap = (inputDataSet: DataMap) => {
 		const colorMap: ComponentColorMap = {}
 		for (const componentConfig of config.components) {
@@ -112,6 +135,7 @@ export const createView = (config: ViewConfig): View => {
 		display: config.display,
 		components: {
 			hidden: hiddenComponentList,
+			extactFromDataMap,
 			getColorMap,
 		},
 		dataIndexerList,

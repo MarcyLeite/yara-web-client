@@ -8,6 +8,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    DatamapVisualizer: typeof import('./components/DatamapVisualizer.vue')['default']
+    Overlay: typeof import('./components/Overlay.vue')['default']
+    Pannel: typeof import('./components/Pannel.vue')['default']
+    Table: typeof import('./components/Table.vue')['default']
     ThreeJs: typeof import('./components/ThreeJs.vue')['default']
     Yara: typeof import('./components/Yara.vue')['default']
   }

@@ -6,7 +6,7 @@ import { createEffects } from './effects'
 import { loadModel } from './load-model'
 import type { EffectComposer, OrbitControls } from 'three/examples/jsm/Addons.js'
 import { createResizeObserver } from './resize-observer'
-import { addInteraction } from './interactions'
+import { addInteraction, type InteractionCallbacks } from './interactions'
 
 const extractSize = (rootElement: HTMLElement) => {
 	const width = rootElement.clientWidth
@@ -23,7 +23,11 @@ export type Yara3DElements = {
 	composer: EffectComposer
 }
 
-export const createYara3D = async (rootElement: HTMLElement, modelPath: string) => {
+export const createYara3D = async (
+	rootElement: HTMLElement,
+	modelPath: string,
+	interactionsCallback: InteractionCallbacks
+) => {
 	const boxSize = extractSize(rootElement)
 	const model = await loadModel(modelPath)
 
@@ -41,7 +45,7 @@ export const createYara3D = async (rootElement: HTMLElement, modelPath: string) 
 
 	const { animate, fps } = startAnimationLoop(sceneElements)
 	const resizeObserver = createResizeObserver(rootElement, animate, sceneElements)
-	const interaction = addInteraction(rootElement, sceneElements, effects)
+	const interaction = addInteraction(rootElement, interactionsCallback, sceneElements, effects)
 
 	const dispose = () => {
 		renderer.dispose()
