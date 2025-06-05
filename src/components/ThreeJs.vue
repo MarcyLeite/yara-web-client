@@ -20,6 +20,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+	console.log(yara3DRef.value)
 	yara3DRef.value?.dispose()
 })
 </script>

@@ -3,15 +3,36 @@ import * as THREE from 'three'
 import { EffectComposer, RenderPass, OutlinePass } from 'three/examples/jsm/Addons.js'
 
 export type EffectsProps = {
+	renderer: THREE.WebGLRenderer
+	scene: THREE.Scene
+	camera: THREE.Camera
 	boxSize: THREE.Vector2
 }
 
-export const createEffects = (
-	renderer: THREE.WebGLRenderer,
-	scene: THREE.Scene,
-	camera: THREE.Camera,
-	{ boxSize }: EffectsProps
+export type Effects = {
+	selectedPass: OutlinePass
+	hoverPass: OutlinePass
+}
+
+const createOutlinePass = (
+	{ boxSize, camera, scene }: EffectsProps,
+	color: THREE.ColorRepresentation
 ) => {
+	const outlinePass = new OutlinePass(boxSize, scene, camera)
+	outlinePass.overlayMaterial.blending = 5
+	outlinePass.clear = false
+
+	outlinePass.edgeStrength = 2
+	outlinePass.edgeGlow = 1
+
+	outlinePass.visibleEdgeColor = new THREE.Color(color)
+	outlinePass.hiddenEdgeColor = new THREE.Color(color)
+
+	return outlinePass
+}
+
+export const createEffects = (props: EffectsProps) => {
+	const { renderer, boxSize, scene, camera } = props
 	const composer = new EffectComposer(renderer)
 	composer.setSize(boxSize.width, boxSize.height)
 
@@ -20,16 +41,11 @@ export const createEffects = (
 
 	composer.addPass(renderPass)
 
-	const outlinePass = new OutlinePass(boxSize, scene, camera, [scene.children[0].children[0]])
-	outlinePass.overlayMaterial.blending = 5
-	outlinePass.clear = false
+	const selectedPass = createOutlinePass(props, 0xff00000)
+	const hoverPass = createOutlinePass(props, 0xbbbbff)
 
-	outlinePass.edgeStrength = 2
-	outlinePass.edgeGlow = 2
-	outlinePass.visibleEdgeColor = new THREE.Color(0xffaaaa)
-	outlinePass.hiddenEdgeColor = new THREE.Color(0xffaaaa)
+	composer.addPass(selectedPass)
+	composer.addPass(hoverPass)
 
-	composer.addPass(outlinePass)
-
-	return composer
+	return { composer, effects: { selectedPass, hoverPass } }
 }
