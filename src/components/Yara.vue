@@ -7,8 +7,14 @@
 <script setup lang="ts">
 import '@/assets/style/yara.scss'
 import { useYaraStore } from '@/stores/yara-store'
+import { storeToRefs } from 'pinia'
 
 const yaraStore = useYaraStore()
+const yaraStoreRef = storeToRefs(yaraStore)
+
+const interval = setInterval(() => {
+	yaraStore.setMoment(new Date(yaraStore.currentMoment.getTime() + 1000))
+}, 1000)
 
 onMounted(() => {
 	yaraStore.setConfig({
@@ -30,17 +36,22 @@ onMounted(() => {
 				components: [
 					{
 						id: 'foo',
-						indexerList: ['A'],
+						indexerList: ['C'],
 					},
 				],
 			},
 		],
 	})
 
+	yaraStore.loop.start()
 	yaraStore.setView(0)
 })
 
-setInterval(() => {
-	yaraStore.setMoment(new Date(yaraStore.currentMoment.getTime() + 1000))
-}, 1000)
+onUnmounted(() => {
+	clearInterval(interval)
+	yaraStore.loop.stop()
+	yaraStore.$dispose()
+})
+
+watch([yaraStoreRef.dataMap], () => {})
 </script>
