@@ -61,12 +61,12 @@ export const useYaraStore = defineStore('yara-store', () => {
 
 	const consumerLoopCallback = async () => {
 		if (!consumer.value) {
-			setTimeout(consumerLoopCallback, 20)
+			setTimeout(consumerLoopCallback, 250)
 			return
 		}
 
 		consumer.value = await consumer.value.update(currentMoment.value)
-		setTimeout(consumerLoopCallback, 20)
+		setTimeout(consumerLoopCallback, 250)
 	}
 
 	const datamapLoopCallback = () => {
@@ -79,7 +79,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 		colorMap.value = view.value.components.getColorMap(_dataMap)
 	}
 
-	setInterval(datamapLoopCallback, 1000)
+	setInterval(datamapLoopCallback, 250)
 	consumerLoopCallback()
 
 	return { loadingMessage, currentMoment, dataMap, colorMap, setConfig, setView, setMoment }

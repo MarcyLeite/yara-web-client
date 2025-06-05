@@ -3,36 +3,23 @@
 </template>
 
 <script lang="ts" setup>
-import { createYara3D } from '@/services/yara-3d'
-import * as THREE from 'three'
+import { createYara3D, type Yara3D } from '@/services/scene3D/yara-3d'
 
 const threeJSRoot = useTemplateRef<HTMLDivElement>('threejs-root')
 
-const cameraRef = ref<THREE.PerspectiveCamera | null>()
-const sceneRef = ref<THREE.Scene | null>()
-const rendererRef = ref<THREE.WebGLRenderer | null>()
+const yara3DRef = ref<Yara3D | null>()
 
-const resizeObserverRef = ref<ResizeObserver | null>()
-
-onMounted(() => {
+onMounted(async () => {
 	const rootElement = threeJSRoot.value
 	if (!rootElement) return
 
-	const { renderer, scene, camera, resizeObserver } = createYara3D(threeJSRoot.value)
-	resizeObserver.observe(rootElement)
-	resizeObserverRef.value = resizeObserver
+	const yara3D = await createYara3D(threeJSRoot.value, 'snowman.glb')
+	rootElement.appendChild(yara3D.renderer.domElement)
 
-	rootElement.appendChild(renderer.domElement)
-
-	rendererRef.value = renderer
-	cameraRef.value = camera
-	sceneRef.value = scene
+	yara3DRef.value = yara3D
 })
 
 onUnmounted(() => {
-	const renderer = rendererRef.value
-	const resizeObserver = resizeObserverRef.value
-	renderer?.dispose()
-	resizeObserver?.disconnect()
+	yara3DRef.value?.dispose()
 })
 </script>
