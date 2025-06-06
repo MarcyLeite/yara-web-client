@@ -1,4 +1,5 @@
 import type { DataMap } from '../buffer'
+import type { Yara3DOptions } from '../scene3D/yara-3d'
 import {
 	createColorMapper,
 	type ColorMapper,
@@ -62,6 +63,9 @@ export type View = {
 	/**
 	 * @property interactive component properties
 	 */
+
+	scene: Yara3DOptions
+
 	components: {
 		/**
 		 * @property string list of Object3D ids
@@ -133,6 +137,7 @@ export const createView = (config: ViewConfig): View => {
 
 	return {
 		display: config.display,
+		scene: mapper.scene,
 		components: {
 			hidden: hiddenComponentList,
 			extactFromDataMap,

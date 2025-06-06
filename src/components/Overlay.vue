@@ -1,7 +1,16 @@
 <template>
 	<div class="overlay p-absolute w-100 h-100 pointer-events-none">
+		<div class="pointer-events-all top-left pa-4">
+			<slot name="top-left" />
+		</div>
 		<div class="pointer-events-all top-right pa-4">
-			<slot></slot>
+			<slot name="top-right" />
+		</div>
+		<div class="pointer-events-all bottom-left pa-4">
+			<slot name="bottom-left" />
+		</div>
+		<div class="pointer-events-all bottom-right pa-4">
+			<slot name="bottom-right" />
 		</div>
 	</div>
 </template>

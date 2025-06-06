@@ -1,4 +1,5 @@
 @use '../palette';
+@use 'animations';
 @use 'sass:map';
 
 @mixin main {
@@ -42,17 +43,19 @@
 			}
 		}
 
-		.border-#{$index} {
-			border-color: $color;
-			border-style: solid;
-			border-width: 1px;
+		.outline-#{$index} {
+			outline-color: $color;
+			outline-style: solid;
+			outline-width: 1px;
 		}
 
 		@for $i from 0 through 10 {
-			.border-#{$index}-alpha-#{$i*10} {
-				border-color: rgba($color, calc($i / 10));
-				border-style: solid;
-				border-width: 1px;
+			.outline-#{$index}-alpha-#{$i*10} {
+				outline-color: rgba($color, calc($i / 10));
+				outline-style: solid;
+				outline-width: 1px;
+				@include animations.outline-hover($color);
+				@include animations.outline-focus($color);
 			}
 		}
 
@@ -63,6 +66,8 @@
 		@for $i from 0 through 10 {
 			.bg-#{$index}-alpha-#{$i*10} {
 				background: rgba($color, calc($i / 10));
+				@include animations.background-hover($color);
+				@include animations.background-focus($color);
 			}
 		}
 	}

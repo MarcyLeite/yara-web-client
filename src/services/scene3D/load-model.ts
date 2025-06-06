@@ -10,17 +10,19 @@ const createTransparentMaterial = (color: string | number) => {
 		depthWrite: false,
 	})
 }
+export const ghostifyModel = (group: THREE.Group) => {
+	for (const object3D of group.children) {
+		updateOjbect3D(object3D as THREE.Mesh)
+	}
+}
 
+const updateOjbect3D = (object3D: THREE.Mesh) => {
+	object3D.material = createTransparentMaterial(0xffffff)
+}
 export const loadModel = (modelPath: string) => {
 	const loader = new GLTFLoader()
-	const updateOjbect3D = (object3D: THREE.Mesh) => {
-		object3D.material = createTransparentMaterial(0xffffff)
-	}
 	return new Promise<THREE.Group>((resolve) => {
 		loader.load(modelPath, (gltf) => {
-			for (const object3D of gltf.scene.children) {
-				updateOjbect3D(object3D as THREE.Mesh)
-			}
 			resolve(gltf.scene)
 		})
 	})

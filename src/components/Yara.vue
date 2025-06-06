@@ -1,7 +1,14 @@
 <template>
 	<div class="yara p-relative">
 		<overlay>
-			<datamap-visualizer :store="yaraStore" />
+			<template #top-left>
+				<view-selector :store="yaraStore" />
+			</template>
+
+			<template #top-right>
+				<datamap-visualizer :store="yaraStore" />
+			</template>
+			<div>ABC</div>
 		</overlay>
 		<three-js :store="yaraStore" @select="yaraStore.setSelectedObject" />
 	</div>
@@ -49,7 +56,6 @@ onMounted(() => {
 	})
 
 	yaraStore.loop.start()
-	yaraStore.setView(0)
 })
 
 onUnmounted(() => {

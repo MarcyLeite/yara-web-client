@@ -13,6 +13,10 @@ declare module 'vue' {
     Pannel: typeof import('./components/Pannel.vue')['default']
     Table: typeof import('./components/Table.vue')['default']
     ThreeJs: typeof import('./components/ThreeJs.vue')['default']
+    ViewSelector: typeof import('./components/ViewSelector.vue')['default']
     Yara: typeof import('./components/Yara.vue')['default']
+    YDivider: typeof import('./components/YDivider.vue')['default']
+    YIcon: typeof import('./components/YIcon.vue')['default']
+    YSelect: typeof import('./components/YSelect.vue')['default']
   }
 }

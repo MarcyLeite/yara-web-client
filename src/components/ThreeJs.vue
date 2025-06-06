@@ -16,7 +16,7 @@ type Props = {
 }
 
 const { store } = defineProps<Props>()
-const { colorMap } = storeToRefs(store)
+const { colorMap, view } = storeToRefs(store)
 
 type Emits = {
 	select: [object: Object3D | null]
@@ -31,6 +31,10 @@ const onSelectCallback = (object3d: Object3D | null) => {
 watch([colorMap], () => {
 	if (!yara3DRef.value || !colorMap.value) return
 	yara3DRef.value.paint(colorMap.value)
+})
+
+watch([view], () => {
+	yara3DRef.value?.refresh(view.value?.scene.mode)
 })
 
 onMounted(async () => {

@@ -22,7 +22,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 	const setConfig = (_config: Config) => {
 		config.value = _config
 	}
-	const setView = (index: number) => {
+	const setView = (index: number | null) => {
 		selectedViewIndex.value = index
 	}
 	const setMoment = (moment: Date) => {
@@ -114,6 +114,8 @@ export const useYaraStore = defineStore('yara-store', () => {
 	}
 
 	return {
+		config,
+		view,
 		loadingMessage,
 		currentMoment,
 		dataMap,

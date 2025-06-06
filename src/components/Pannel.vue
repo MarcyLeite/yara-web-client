@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="bg-panel-alpha-80 border-panel-border-alpha-90 text-light pa-4 rounded-xl elevation-1"
+		class="bg-panel-alpha-80 ba-1 outline-panel-border-alpha-90 text-light pa-4 rounded-xl elevation-1"
 	>
 		<slot></slot>
 	</div>

@@ -3,11 +3,15 @@ import { createScene } from './scene'
 import { createOrbitControls } from './orbit-controls'
 import { createRenderer, startAnimationLoop } from './renderer'
 import { createEffects } from './effects'
-import { loadModel } from './load-model'
+import { ghostifyModel, loadModel } from './load-model'
 import type { EffectComposer, OrbitControls } from 'three/examples/jsm/Addons.js'
 import { createResizeObserver } from './resize-observer'
 import { addInteraction, type InteractionCallbacks } from './interactions'
 import type { ComponentColorMap } from '../view'
+
+export type Yara3DOptions = {
+	mode: 'ghost'
+}
 
 const extractSize = (rootElement: HTMLElement) => {
 	const width = rootElement.clientWidth
@@ -30,9 +34,11 @@ export const createYara3D = async (
 	interactionsCallback: InteractionCallbacks
 ) => {
 	const boxSize = extractSize(rootElement)
-	const model = await loadModel(modelPath)
+	const originalModel = await loadModel(modelPath)
 
-	const { scene, camera } = createScene(model, {
+	let model = originalModel.clone()
+
+	const { scene, camera } = createScene({
 		boxSize,
 		backgroundColor: 0xffffff,
 		lightColor: 0xdddddd,
@@ -47,6 +53,15 @@ export const createYara3D = async (
 	const { animate, fps } = startAnimationLoop(sceneElements)
 	const resizeObserver = createResizeObserver(rootElement, animate, sceneElements)
 	const interaction = addInteraction(rootElement, interactionsCallback, sceneElements, effects)
+
+	const refresh = (mode?: 'ghost') => {
+		scene.remove(model)
+		model = originalModel.clone()
+		if (mode === 'ghost') ghostifyModel(model)
+		scene.add(model)
+	}
+
+	refresh()
 
 	const paint = (componentColorMap?: ComponentColorMap) => {
 		if (!componentColorMap) return
@@ -67,7 +82,7 @@ export const createYara3D = async (
 		resizeObserver.disconnect()
 	}
 
-	return { renderer, fps, paint, resizeObserver, dispose }
+	return { renderer, refresh, fps, paint, resizeObserver, dispose }
 }
 
 export type Yara3D = Awaited<ReturnType<typeof createYara3D>>

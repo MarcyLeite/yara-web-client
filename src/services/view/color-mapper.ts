@@ -1,3 +1,4 @@
+import type { Yara3DOptions } from '../scene3D/yara-3d'
 import {
 	createMapperThermal,
 	type ColorMapperThermal,
@@ -23,6 +24,7 @@ export type ColorMapperType = {
 	 * @property type fix string for each implementaition
 	 */
 	type: string
+	scene: Yara3DOptions
 	/**
 	 * Calculates color given generic data
 	 * @param genericData
