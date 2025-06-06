@@ -35,7 +35,7 @@ export const createMapperThermal = ({
 	}
 
 	const getColor = (value: GenericData) => {
-		if (typeof value !== 'number') return '#000000'
+		if (typeof value !== 'number') return
 		return hueToHSL(getHueValue(value))
 	}
 

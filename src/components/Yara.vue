@@ -8,7 +8,9 @@
 			<template #top-right>
 				<datamap-visualizer :store="yaraStore" />
 			</template>
-			<div>ABC</div>
+			<template #bottom-left>
+				<time-controller :store="yaraStore" />
+			</template>
 		</overlay>
 		<three-js :store="yaraStore" @select="yaraStore.setSelectedObject" />
 	</div>
@@ -19,10 +21,6 @@ import '@/assets/style/yara.scss'
 import { useYaraStore } from '@/stores/yara-store'
 
 const yaraStore = useYaraStore()
-
-const interval = setInterval(() => {
-	yaraStore.setMoment(new Date(yaraStore.currentMoment.getTime() + 1000))
-}, 1000)
 
 onMounted(() => {
 	yaraStore.setConfig({
@@ -59,7 +57,6 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-	clearInterval(interval)
 	yaraStore.loop.stop()
 	yaraStore.$dispose()
 })

@@ -6,35 +6,36 @@
 		}
 	}
 
-	.jump-on-click {
-		animation: jump 0.2s ease;
+	.jumpy {
+		&:hover > * {
+			animation: jump 0.5s ease-in infinite;
+		}
 	}
 
 	@keyframes jump {
 		0% {
 			translate: 0;
+			rotate: 0;
+		}
+		12% {
+			translate: -2px -1px;
+			rotate: -5deg;
 		}
 		50% {
-			translate: 0 -4px;
+			translate: 2px -1px;
+			rotate: 5deg;
+		}
+		75% {
+			translate: 2px 1px;
+			rotate: 5deg;
 		}
 		100% {
 			translate: 0;
+			rotate: 0;
 		}
 	}
-}
 
-@mixin outline-hover($color) {
-	&.hover {
-		transition: outline 0.5s;
-		&:hover {
-			outline-color: rgba($color, 1);
-			outline-width: 4;
-		}
-	}
-}
-
-@mixin background-hover($color) {
-	&.hover {
+	.hover {
 		&::after {
 			content: '';
 
@@ -59,6 +60,19 @@
 			}
 		}
 	}
+}
+
+@mixin outline-hover($color) {
+	&.hover {
+		transition: outline 0.5s;
+		&:hover {
+			outline-color: rgba($color, 1);
+			outline-width: 4;
+		}
+	}
+}
+
+@mixin background-hover($color) {
 }
 
 @mixin background-focus($color) {

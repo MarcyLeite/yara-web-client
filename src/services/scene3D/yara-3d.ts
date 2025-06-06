@@ -36,7 +36,7 @@ export const createYara3D = async (
 	const boxSize = extractSize(rootElement)
 	const originalModel = await loadModel(modelPath)
 
-	let model = originalModel.clone()
+	let model: THREE.Group
 
 	const { scene, camera } = createScene({
 		boxSize,
@@ -56,7 +56,7 @@ export const createYara3D = async (
 
 	const refresh = (mode?: 'ghost') => {
 		scene.remove(model)
-		model = originalModel.clone()
+		model = originalModel.clone(true)
 		if (mode === 'ghost') ghostifyModel(model)
 		scene.add(model)
 	}
@@ -67,10 +67,11 @@ export const createYara3D = async (
 		if (!componentColorMap) return
 		for (const [name, color] of Object.entries(componentColorMap)) {
 			const object3d = scene.getObjectByName(name) as THREE.Mesh
-			if (!object3d) continue
-			const material = object3d.material as THREE.MeshStandardMaterial
+			if (!object3d || !color) continue
+			const material = (object3d.material as THREE.MeshStandardMaterial).clone()
 
 			material.color = new THREE.Color(color)
+			object3d.material = material
 		}
 	}
 

@@ -1,8 +1,10 @@
 <template>
 	<pannel>
-		<div class="d-flex ga-4 align-center text-button">
-			VIEW
-			<y-select width="10rem" :options="options" :default="-1" @select="onSelect" />
+		<div class="pa-2">
+			<div class="d-flex ga-4 align-center text-button">
+				VIEW
+				<y-select width="10rem" :options="options" :default="-1" @select="onSelect" />
+			</div>
 		</div>
 	</pannel>
 </template>

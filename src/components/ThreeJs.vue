@@ -35,6 +35,7 @@ watch([colorMap], () => {
 
 watch([view], () => {
 	yara3DRef.value?.refresh(view.value?.scene.mode)
+	store.refreshColorMap()
 })
 
 onMounted(async () => {

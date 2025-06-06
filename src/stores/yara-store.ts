@@ -26,19 +26,29 @@ export const useYaraStore = defineStore('yara-store', () => {
 		selectedViewIndex.value = index
 	}
 	const setMoment = (moment: Date) => {
-		if (!view.value || !consumer.value || moment.getTime() === currentMoment.value.getTime()) {
+		if (moment.getTime() > new Date().getTime()) moment = new Date()
+		const prev = currentMoment.value
+		currentMoment.value = moment
+		if (!view.value || !consumer.value || moment.getTime() === prev.getTime()) {
 			return
 		}
-		const _dataMap = consumer.value.getDifference(currentMoment.value, moment)
+
+		const _dataMap = consumer.value.getDifference(prev, moment)
 
 		dataMap.value = _dataMap
 		colorMap.value = view.value.components.getColorMap(_dataMap)
-
-		currentMoment.value = moment
 	}
 
 	const setSelectedObject = (object3d: Object3D | null) => {
 		selectedObject.value = object3d
+	}
+
+	const refreshColorMap = () => {
+		if (!consumer.value || !view.value) return
+		const _dataMap = consumer.value.getSnapshot(currentMoment.value)
+		dataMap.value = _dataMap
+
+		colorMap.value = view.value.components.getColorMap(_dataMap)
 	}
 
 	const connection = ref<Optional<Connection>>(null)
@@ -79,13 +89,12 @@ export const useYaraStore = defineStore('yara-store', () => {
 		}
 
 		const _view = createView(config.value.views[selectedViewIndex.value])
+		view.value = _view
 		const bufferStrategy = createBufferStrategy(connection.value, _view.dataIndexerList)
 		const _consumer = await createConsumer(bufferStrategy, currentMoment.value, BUFFER_SIZE)
-		const _dataMap = _consumer.getSnapshot(currentMoment.value)
-
-		view.value = _view
 		consumer.value = _consumer
-		dataMap.value = _dataMap
+
+		refreshColorMap()
 	})
 
 	let timout: number | undefined
@@ -118,6 +127,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 		view,
 		loadingMessage,
 		currentMoment,
+		refreshColorMap,
 		dataMap,
 		selectedObject,
 		selectedDataMap,

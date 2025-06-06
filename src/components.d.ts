@@ -8,13 +8,17 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Clock: typeof import('./components/Clock.vue')['default']
     DatamapVisualizer: typeof import('./components/DatamapVisualizer.vue')['default']
     Overlay: typeof import('./components/Overlay.vue')['default']
     Pannel: typeof import('./components/Pannel.vue')['default']
     Table: typeof import('./components/Table.vue')['default']
     ThreeJs: typeof import('./components/ThreeJs.vue')['default']
+    TimeControl: typeof import('./components/TimeControl.vue')['default']
+    TimeController: typeof import('./components/TimeController.vue')['default']
     ViewSelector: typeof import('./components/ViewSelector.vue')['default']
     Yara: typeof import('./components/Yara.vue')['default']
+    YBtn: typeof import('./components/YBtn.vue')['default']
     YDivider: typeof import('./components/YDivider.vue')['default']
     YIcon: typeof import('./components/YIcon.vue')['default']
     YSelect: typeof import('./components/YSelect.vue')['default']
