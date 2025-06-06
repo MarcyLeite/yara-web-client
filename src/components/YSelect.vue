@@ -1,11 +1,11 @@
 <template>
 	<div ref="parentRef" class="p-relative text-button">
-		<div @click="onClick()" :class="`${parentClass}${isFocused ? ' focused' : ' hover'}`">
+		<div @click="onClick()" :class="[parentClass, { focused: isFocused, hover: !isFocused }]">
 			<div class="p-relative pointer-events-none">
 				<label v-if="selectedTitle === null" class="p-absolute text-light-alpha-80">Select</label>
 				<input class="text-light text-button" :style="{ width }" :value="selectedTitle" readonly />
 			</div>
-			<div :class="`focus-rotate${isFocused ? ' focused' : ''}`">
+			<div :class="['focus-rotate', { focused: isFocused }]">
 				<y-icon :path="mdiChevronDown" />
 			</div>
 		</div>
