@@ -5,7 +5,6 @@
 <script lang="ts" setup>
 import { createYara3D, type Yara3D } from '@/modules/scene3D/yara-3d'
 import type { YaraStore } from '@/stores/yara-store'
-import { storeToRefs } from 'pinia'
 import type { Object3D } from 'three'
 
 const threeJSRoot = useTemplateRef<HTMLDivElement>('threejs-root')
@@ -16,12 +15,6 @@ type Props = {
 }
 
 const { store } = defineProps<Props>()
-
-type Emits = {
-	select: [object: Object3D | null]
-}
-
-const emit = defineEmits<Emits>()
 
 const onSelectCallback = (object3d: Object3D | null) => {
 	store.setSelectedObject3D(object3d)
