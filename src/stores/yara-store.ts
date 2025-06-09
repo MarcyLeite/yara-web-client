@@ -57,8 +57,6 @@ export const useYaraStore = defineStore('yara-store', () => {
 	const setView = async (index: number | null) => {
 		const view = viewListRef.value[index ?? -1] ?? null
 		viewRef.value = view
-
-		painterRef.value?.reset()
 	}
 
 	const setSelectedObject3D = (object3D: Object3D | null) => {
