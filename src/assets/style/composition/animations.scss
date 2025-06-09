@@ -6,10 +6,24 @@
 		}
 	}
 
-	.focus-icon-jump {
-		animation: jump 0.5s ease-in infinite;
-		&:focus > * {
-			animation: jump 0.5s ease-in infinite;
+	@keyframes shake {
+		0% {
+			transform: translateY(1px);
+			rotate: 0deg;
+		}
+		25% {
+			rotate: 10deg;
+		}
+		50% {
+			transform: translateY(0px);
+			rotate: 0deg;
+		}
+		75% {
+			rotate: -10deg;
+		}
+		100% {
+			transform: translateY(1px);
+			rotate: 0deg;
 		}
 	}
 
@@ -35,6 +49,14 @@
 		&:hover {
 			&::after {
 				background-color: rgba(#ffffff, 0.08);
+			}
+		}
+		&.shake:hover {
+			& > .icon {
+				animation-name: shake;
+				animation-duration: 0.5s;
+				animation-timing-function: ease-in-out;
+				animation-iteration-count: infinite;
 			}
 		}
 	}

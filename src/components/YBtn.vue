@@ -1,6 +1,6 @@
 <template>
 	<div v-if="icon">
-		<button class="p-relative pa-2 rounded-pill hover" @click="(e) => emit('click', e)">
+		<button class="p-relative pa-2 rounded-pill hover shake" @click="(e) => emit('click', e)">
 			<y-icon :path="icon" />
 		</button>
 	</div>
