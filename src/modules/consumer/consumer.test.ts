@@ -4,7 +4,7 @@ import {
 	createDateFromShift,
 	createMockConnection,
 	INITIAL_DATE,
-} from '../../tests/utils/mock-connection'
+} from '../../../tests/utils/mock-connection'
 import { createBufferStrategy } from './buffer-strategy'
 import { createConsumer } from './consumer'
 

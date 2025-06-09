@@ -1,4 +1,4 @@
-import type { ConnectionConfig } from './connection'
+import type { ConnectionConfig } from './connection/connection'
 import type { ViewConfig } from './view'
 
 export type Config = {

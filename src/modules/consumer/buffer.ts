@@ -1,6 +1,6 @@
-import { mergeData } from '../utils/merger'
+import { mergeData } from '../../utils/merger'
 import type { BufferStrategy } from './buffer-strategy'
-import type { GenericData, Snapshot } from './connection'
+import type { GenericData, Snapshot } from '../connection/connection'
 
 /**
  * Indentifier key: GenericData value.

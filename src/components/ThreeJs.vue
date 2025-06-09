@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import { createYara3D, type Yara3D } from '@/services/scene3D/yara-3d'
+import { createYara3D, type Yara3D } from '@/modules/scene3D/yara-3d'
 import type { YaraStore } from '@/stores/yara-store'
 import { storeToRefs } from 'pinia'
 import type { Object3D } from 'three'

@@ -1,8 +1,8 @@
 import type { Optional } from '@/utils/types'
-import type { DataMap } from './buffer'
-import { createConsumer } from './consumer'
-import { createBufferStrategy } from './buffer-strategy'
-import type { Connection } from './connection'
+import type { DataMap } from './consumer/buffer'
+import { createConsumer } from './consumer/consumer'
+import { createBufferStrategy } from './consumer/buffer-strategy'
+import type { Connection } from './connection/connection'
 import type { View } from './view'
 
 export const createConsumerUpdater = async (

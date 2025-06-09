@@ -1,4 +1,4 @@
-import { Connection, Snapshot, GenericData } from '../../src/services/connection'
+import { Connection, Snapshot, GenericData } from '../../src/modules/connection/connection'
 
 const createRangeList = async (connection: Connection, initDate: Date, finalDate: Date) => {
 	const l = ['A', 'B', 'C', 'D']

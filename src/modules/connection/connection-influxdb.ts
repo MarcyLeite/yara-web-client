@@ -1,7 +1,7 @@
 import { InfluxDB } from '@influxdata/influxdb-client'
 import type { GenericData, Snapshot, Connection, ConnectionConfigType } from './connection'
-import { sortByTimestamp } from '../utils/sorter'
-import { mergeData } from '../utils/merger'
+import { sortByTimestamp } from '../../utils/sorter'
+import { mergeData } from '../../utils/merger'
 
 /**
  * InfluxDB yara configuration format

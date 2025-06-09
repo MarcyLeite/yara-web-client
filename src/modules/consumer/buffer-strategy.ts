@@ -1,5 +1,5 @@
-import { mergeData } from '../utils/merger'
-import type { Snapshot, Connection } from './connection'
+import { mergeData } from '../../utils/merger'
+import type { Snapshot, Connection } from '../connection/connection'
 
 export type updateOptions = {
 	snapshotList?: Snapshot[]

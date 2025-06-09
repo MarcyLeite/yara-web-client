@@ -1,10 +1,10 @@
-import type { DataMap } from '@/services/buffer'
-import type { Config } from '@/services/configuration'
-import { createConnection, type Connection } from '@/services/connection'
-import { createConsumerUpdater, type ConsumerUpdater } from '@/services/consumer-updater'
-import { createPainter, type Painter } from '@/services/painter'
-import { type Yara3D } from '@/services/scene3D/yara-3d'
-import { createView, type View } from '@/services/view'
+import type { DataMap } from '@/modules/consumer/buffer'
+import type { Config } from '@/modules/configuration'
+import { createConnection, type Connection } from '@/modules/connection/connection'
+import { createConsumerUpdater, type ConsumerUpdater } from '@/modules/consumer-updater'
+import { createPainter, type Painter } from '@/modules/painter'
+import { type Yara3D } from '@/modules/scene3D/yara-3d'
+import { createView, type View } from '@/modules/view'
 import type { Optional } from '@/utils/types'
 import { defineStore } from 'pinia'
 import type { Object3D } from 'three'
@@ -33,8 +33,8 @@ export const useYaraStore = defineStore('yara-store', () => {
 		const consumerUpdater = consumerUpdaterRef.value
 
 		if (consumerUpdater) {
-			dataMapRef.value = consumerUpdater.fixedDataMap ?? {}
 			consumerUpdater.setMoment(newMoment)
+			dataMapRef.value = consumerUpdater.fixedDataMap ?? {}
 		}
 
 		const painter = painterRef.value
@@ -82,11 +82,13 @@ export const useYaraStore = defineStore('yara-store', () => {
 		const consumerUpdater = await createConsumerUpdater(shiftedDate, connection, view, BUFFER_SIZE)
 		const painter = createPainter(consumerUpdater, view, yara3D)
 
-		consumerUpdater.setMoment(moment.value)
 		painter.reset(view.scene.mode)
+
+		consumerUpdater.setMoment(moment.value)
 		painter.refresh()
 
 		consumerUpdaterRef.value = consumerUpdater
+		dataMapRef.value = consumerUpdater.fixedDataMap ?? {}
 		painterRef.value = painter
 	})
 

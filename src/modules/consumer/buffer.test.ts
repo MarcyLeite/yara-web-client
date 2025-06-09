@@ -3,7 +3,7 @@ import {
 	compareSnapshotInRange,
 	createDateFromShift,
 	createMockConnection,
-} from '../../tests/utils/mock-connection'
+} from '../../../tests/utils/mock-connection'
 import { createBufferStrategy } from './buffer-strategy'
 import { createBuffer } from './buffer'
 import Sinon from 'sinon'

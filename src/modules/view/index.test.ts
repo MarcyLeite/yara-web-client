@@ -1,5 +1,5 @@
 import { hueToHSL } from '../../utils/color-converter'
-import { DataMap } from '../buffer'
+import { DataMap } from '../consumer/buffer'
 import { mockView as view, mockViewConfig as baseConfig } from '../../../tests/utils/mock-view'
 
 describe('[Service] View', () => {

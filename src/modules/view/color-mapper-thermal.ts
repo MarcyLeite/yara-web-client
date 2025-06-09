@@ -1,5 +1,5 @@
 import { hueToHSL } from '../../utils/color-converter'
-import type { GenericData } from '../connection'
+import type { GenericData } from '../connection/connection'
 import type { ColorMapperType, ColorMapperOptionsType } from './color-mapper'
 
 /**

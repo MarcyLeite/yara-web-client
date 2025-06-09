@@ -1,4 +1,4 @@
-import type { DataMap } from '../buffer'
+import type { DataMap } from '../consumer/buffer'
 import type { Yara3DOptions } from '../scene3D/yara-3d'
 import {
 	createColorMapper,

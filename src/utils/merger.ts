@@ -1,4 +1,4 @@
-import type { GenericData } from '../services/connection'
+import type { GenericData } from '../modules/connection/connection'
 
 export const mergeData = (originalData: GenericData, newData: GenericData) => {
 	const copy = Object.assign({}, originalData)

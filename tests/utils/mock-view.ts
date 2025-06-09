@@ -1,4 +1,4 @@
-import { createView, ViewConfig } from '../../src/services/view'
+import { createView, ViewConfig } from '../../src/modules/view'
 
 export const mockViewConfig: ViewConfig = {
 	display: 'Thermal View',

@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import type { YaraStore } from '@/stores/yara-store'
 import type { Option } from './YSelect.vue'
-import { viewToOptions } from '@/services/view/helper'
+import { viewToOptions } from '@/modules/view/helper'
 import { storeToRefs } from 'pinia'
 
 type Props = {

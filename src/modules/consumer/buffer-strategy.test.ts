@@ -3,7 +3,7 @@ import {
 	createMockConnection,
 	compareSnapshotInRange,
 	createDateFromShift,
-} from '../../tests/utils/mock-connection'
+} from '../../../tests/utils/mock-connection'
 import { createBufferStrategy } from './buffer-strategy'
 
 describe('[Service] Buffer Strategy', () => {
