@@ -70,11 +70,22 @@ export const addInteraction = (
 	rootElement.addEventListener('mousemove', onHover)
 	rootElement.addEventListener('mouseup', onClick)
 
+	const refresh = (model: THREE.Group) => {
+		if (!selectedObject) return
+
+		const object3d = model.getObjectByName(selectedObject.name)
+
+		selectedObject = object3d ?? null
+
+		if (!selectedObject) return
+		selectedPass.selectedObjects = [selectedObject]
+	}
+
 	const dispose = () => {
 		rootElement.removeEventListener('mousedown', onMouseDown)
 		rootElement.removeEventListener('mousemove', onHover)
 		rootElement.removeEventListener('mouseup', onClick)
 	}
 
-	return { dispose }
+	return { refresh, dispose }
 }

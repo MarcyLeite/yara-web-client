@@ -11,16 +11,16 @@
 
 <script setup lang="ts">
 import type { YaraStore } from '@/stores/yara-store'
-import { storeToRefs } from 'pinia'
 import type { Option } from './YSelect.vue'
-import { viewConfigToOptions } from '@/services/view/helper'
+import { viewToOptions } from '@/services/view/helper'
+import { storeToRefs } from 'pinia'
 
 type Props = {
 	store: YaraStore
 }
 
 const { store } = defineProps<Props>()
-const { config } = storeToRefs(store)
+const { viewList } = storeToRefs(store)
 
 const noneOption = { title: 'None', value: -1 }
 
@@ -31,10 +31,9 @@ const onSelect = (option: number) => {
 }
 
 const update = () => {
-	if (!config.value) return
-	options.value = [noneOption, ...viewConfigToOptions(config.value.views)]
+	options.value = [noneOption, ...viewToOptions(viewList.value)]
 }
 
-watch([config], update)
+watch([viewList], update)
 onMounted(update)
 </script>

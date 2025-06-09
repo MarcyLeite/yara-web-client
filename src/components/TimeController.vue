@@ -1,7 +1,7 @@
 <template>
 	<pannel>
 		<div class="pa-2 d-flex ga-4">
-			<clock v-model:model-value="currentMoment" />
+			<clock v-model:model-value="moment" />
 			<div class="d-flex grow-1 flex-column align-center pa-4">
 				<div class="text-button text-bold">Controller</div>
 				<div class="d-flex grow-1 ga-2 align-center">
@@ -34,17 +34,17 @@ type Props = {
 
 const { store } = defineProps<Props>()
 
-const { currentMoment } = storeToRefs(store)
+const { moment } = storeToRefs(store)
 
 const isPaused = ref(false)
 
 const goTowards = (seconds: number) => {
-	store.setMoment(new Date(currentMoment.value.getTime() + seconds * 1000))
+	store.setMoment(new Date(moment.value.getTime() + seconds * 1000))
 }
 
 const interval = setInterval(() => {
 	if (isPaused.value) return
-	store.setMoment(new Date(currentMoment.value.getTime() + 1000))
+	store.setMoment(new Date(moment.value.getTime() + 1000))
 }, 1000)
 
 onUnmounted(() => {

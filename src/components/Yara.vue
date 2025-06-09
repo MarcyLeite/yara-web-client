@@ -12,7 +12,7 @@
 				<time-controller :store="yaraStore" />
 			</template>
 		</overlay>
-		<three-js :store="yaraStore" @select="yaraStore.setSelectedObject" />
+		<three-js :store="yaraStore" />
 	</div>
 </template>
 
@@ -24,6 +24,7 @@ const yaraStore = useYaraStore()
 
 onMounted(() => {
 	yaraStore.setConfig({
+		modelPath: 'snowman.glb',
 		connection: {
 			type: 'influxdb',
 			org: 'dev',
@@ -52,12 +53,10 @@ onMounted(() => {
 			},
 		],
 	})
-
-	yaraStore.loop.start()
 })
 
 onUnmounted(() => {
-	yaraStore.loop.stop()
+	yaraStore.dispose()
 	yaraStore.$dispose()
 })
 </script>

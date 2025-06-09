@@ -1,142 +1,111 @@
 import type { DataMap } from '@/services/buffer'
-import { createBufferStrategy } from '@/services/buffer-strategy'
 import type { Config } from '@/services/configuration'
 import { createConnection, type Connection } from '@/services/connection'
-import { createConsumer, type Consumer } from '@/services/consumer'
-import { createView, type ComponentColorMap, type View } from '@/services/view'
+import { createConsumerUpdater, type ConsumerUpdater } from '@/services/consumer-updater'
+import { createPainter, type Painter } from '@/services/painter'
+import { type Yara3D } from '@/services/scene3D/yara-3d'
+import { createView, type View } from '@/services/view'
+import type { Optional } from '@/utils/types'
 import { defineStore } from 'pinia'
 import type { Object3D } from 'three'
-
-type Optional<T extends unknown> = T | null
 
 const BUFFER_SIZE = 60000
 
 export const useYaraStore = defineStore('yara-store', () => {
-	const initialDate = new Date(import.meta.env.INITIAL_DATE)
+	const moment = ref(new Date(import.meta.env.INITIAL_DATE))
 
-	const config = ref<Optional<Config>>(null)
-	const selectedViewIndex = ref<Optional<number>>(null)
-	const currentMoment = ref(initialDate)
-	const selectedObject = ref<Optional<Object3D>>(null)
+	const viewListRef = ref<View[]>([])
 
-	const setConfig = (_config: Config) => {
-		config.value = _config
-	}
-	const setView = (index: number | null) => {
-		selectedViewIndex.value = index
-	}
-	const setMoment = (moment: Date) => {
-		if (moment.getTime() > new Date().getTime()) moment = new Date()
-		const prev = currentMoment.value
-		currentMoment.value = moment
-		if (!view.value || !consumer.value || moment.getTime() === prev.getTime()) {
-			return
+	const selectedObject3DRef = ref<Object3D | null>(null)
+	const dataMapRef = ref<DataMap>({})
+
+	const connectionRef = ref<Optional<Connection>>(null)
+
+	const yara3DRef = ref<Optional<Yara3D>>(null)
+	const viewRef = ref<Optional<View>>(null)
+	const consumerUpdaterRef = ref<Optional<ConsumerUpdater>>(null)
+	const painterRef = ref<Optional<Painter>>(null)
+
+	const setMoment = (newMoment: Date) => {
+		const prev = moment.value
+		moment.value = newMoment
+
+		const consumerUpdater = consumerUpdaterRef.value
+
+		if (consumerUpdater) {
+			dataMapRef.value = consumerUpdater.fixedDataMap ?? {}
+			consumerUpdater.setMoment(newMoment)
 		}
 
-		const _dataMap = consumer.value.getDifference(prev, moment)
+		const painter = painterRef.value
+		if (!painter || newMoment === prev) return
 
-		dataMap.value = _dataMap
-		colorMap.value = view.value.components.getColorMap(_dataMap)
+		if (newMoment > prev) painter.update()
+		else painter.refresh()
 	}
 
-	const setSelectedObject = (object3d: Object3D | null) => {
-		selectedObject.value = object3d
+	const setConfig = (newConfig: Config) => {
+		viewListRef.value = newConfig.views.map((viewConfig) => createView(viewConfig))
+		connectionRef.value = createConnection(newConfig.connection)
 	}
 
-	const refreshColorMap = () => {
-		if (!consumer.value || !view.value) return
-		const _dataMap = consumer.value.getSnapshot(currentMoment.value)
-		dataMap.value = _dataMap
-
-		colorMap.value = view.value.components.getColorMap(_dataMap)
+	const setYara3D = (yara3D?: Yara3D) => {
+		yara3DRef.value?.dispose()
+		yara3DRef.value = yara3D ?? null
 	}
 
-	const connection = ref<Optional<Connection>>(null)
-	const view = ref<Optional<View>>(null)
-	const consumer = ref<Optional<Consumer>>(null)
+	const setView = async (index: number | null) => {
+		const view = viewListRef.value[index ?? -1] ?? null
+		viewRef.value = view
 
-	const loadingMessage = ref<Optional<string>>(null)
-	const colorMap = ref<Optional<ComponentColorMap>>(null)
-	const dataMap = ref<Optional<DataMap>>(null)
+		painterRef.value?.reset()
+	}
 
-	const selectedDataMap = ref<Optional<DataMap>>(null)
+	const setSelectedObject3D = (object3D: Object3D | null) => {
+		selectedObject3DRef.value = object3D
+	}
 
-	watch([dataMap, selectedObject], () => {
-		if (!dataMap.value || !selectedObject.value || !view.value) {
-			selectedDataMap.value = null
-			return
-		}
-		selectedDataMap.value = view.value.components.extactFromDataMap(
-			selectedObject.value.name,
-			dataMap.value
-		)
+	watch([viewRef, connectionRef], async () => {
+		const view = viewRef.value
+		const connection = connectionRef.value
+		const yara3D = yara3DRef.value
+
+		painterRef.value?.reset()
+		consumerUpdaterRef.value?.dispose()
+
+		painterRef.value = null
+		consumerUpdaterRef.value = null
+
+		if (!view || !connection || !yara3D) return
+
+		const shiftedDate = new Date(moment.value.getTime() - 10000)
+		const consumerUpdater = await createConsumerUpdater(shiftedDate, connection, view, BUFFER_SIZE)
+		const painter = createPainter(consumerUpdater, view, yara3D)
+
+		consumerUpdater.setMoment(moment.value)
+		painter.reset(view.scene.mode)
+		painter.refresh()
+
+		consumerUpdaterRef.value = consumerUpdater
+		painterRef.value = painter
 	})
 
-	watch([config], () => {
-		if (!config.value) {
-			loadingMessage.value = 'Creating connection...'
-			connection.value = null
-			return
-		}
-		connection.value = createConnection(config.value.connection)
-	})
-
-	watch([selectedViewIndex, connection], async () => {
-		if (selectedViewIndex.value === null || !config.value || !connection.value) {
-			view.value = null
-			consumer.value = null
-			return
-		}
-
-		const _view = createView(config.value.views[selectedViewIndex.value])
-		view.value = _view
-		const bufferStrategy = createBufferStrategy(connection.value, _view.dataIndexerList)
-		const _consumer = await createConsumer(bufferStrategy, currentMoment.value, BUFFER_SIZE)
-		consumer.value = _consumer
-
-		refreshColorMap()
-	})
-
-	let timout: number | undefined
-
-	const consumerLoopCallback = async () => {
-		if (!consumer.value) {
-			timout = setTimeout(consumerLoopCallback, 250)
-			return
-		}
-
-		consumer.value = await consumer.value.update(currentMoment.value)
-		timout = setTimeout(consumerLoopCallback, 250)
-	}
-
-	const loop = {
-		get status() {
-			return timout === null ? 'OFF' : 'ON'
-		},
-		start: () => {
-			consumerLoopCallback()
-		},
-		stop: () => {
-			clearTimeout(timout)
-			timout = undefined
-		},
+	const dispose = () => {
+		consumerUpdaterRef.value?.dispose()
 	}
 
 	return {
-		config,
-		view,
-		loadingMessage,
-		currentMoment,
-		refreshColorMap,
-		dataMap,
-		selectedObject,
-		selectedDataMap,
-		colorMap,
-		setConfig,
-		setView,
+		moment,
+		dataMap: dataMapRef,
+		view: viewRef,
+		viewList: viewListRef,
+		selectedObject3D: selectedObject3DRef,
 		setMoment,
-		setSelectedObject,
-		loop,
+		setConfig,
+		setYara3D,
+		setView,
+		setSelectedObject3D,
+		dispose,
 	}
 })
 

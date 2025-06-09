@@ -70,6 +70,10 @@ export type View = {
 		/**
 		 * @property string list of Object3D ids
 		 */
+		idList: string[]
+		/**
+		 * @property string list of Object3D ids
+		 */
 		hidden: string[]
 
 		/**
@@ -96,8 +100,10 @@ export type View = {
 export const createView = (config: ViewConfig): View => {
 	const dataIndexerList: string[] = []
 	const hiddenComponentList: string[] = []
+	const idList: string[] = []
 
 	for (const { id, indexerList, isHidden } of config.components) {
+		idList.push(id)
 		if (indexerList) {
 			dataIndexerList.push(...indexerList)
 		}
@@ -129,6 +135,8 @@ export const createView = (config: ViewConfig): View => {
 
 			const measuarent = componentConfig.indexerList[0]
 
+			if (inputDataSet[measuarent] === undefined) continue
+
 			colorMap[componentConfig.id] = mapper.getColor(inputDataSet[measuarent]?.eng ?? null)
 		}
 
@@ -139,6 +147,7 @@ export const createView = (config: ViewConfig): View => {
 		display: config.display,
 		scene: mapper.scene,
 		components: {
+			idList,
 			hidden: hiddenComponentList,
 			extactFromDataMap,
 			getColorMap,

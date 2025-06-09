@@ -1,4 +1,3 @@
-import * as THREE from 'three'
 import type { Yara3DElements } from './yara-3d'
 
 export const createResizeObserver = (

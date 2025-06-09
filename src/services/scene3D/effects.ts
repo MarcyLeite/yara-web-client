@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-
 import { EffectComposer, RenderPass, OutlinePass } from 'three/examples/jsm/Addons.js'
 
 export type EffectsProps = {

@@ -1,8 +1,8 @@
-import type { ViewConfig } from '.'
+import type { View, ViewConfig } from '.'
 
-export const viewConfigToOptions = (configList: ViewConfig[]) => {
-	return configList.map((config, i) => ({
-		title: config.display,
+export const viewToOptions = (viewList: View[] | ViewConfig[]) => {
+	return viewList.map((view, i) => ({
+		title: view.display,
 		value: i,
 	}))
 }

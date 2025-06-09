@@ -1,10 +1,10 @@
 <template>
 	<pannel>
 		<div class="pa-2">
-			<div v-if="dataMap === null || !selectedObject">No Content</div>
+			<div v-if="dataMap === null || !selectedObject3D">No Content</div>
 			<div v-else>
-				<div>{{ selectedObject.name }}</div>
-				<div class="d-flex">
+				<div>{{ selectedObject3D.name }}</div>
+				<div class="d-flex" v-if="columnList[0].length > 1">
 					<div>
 						<div
 							:key="i"
@@ -40,13 +40,19 @@ type Props = {
 }
 
 const { store } = defineProps<Props>()
-const { selectedDataMap: dataMap, selectedObject } = storeToRefs(store)
+const { dataMap, selectedObject3D, view } = storeToRefs(store)
 
 const columnList = ref<[string[], unknown[]]>([[], []])
 
-watch([dataMap], () => {
-	if (!dataMap.value) return
-	columnList.value = Object.entries(dataMap.value).reduce(
+watch([view, selectedObject3D, dataMap], () => {
+	if (!view.value || !selectedObject3D.value) {
+		columnList.value = [[], []]
+		return
+	}
+	const filteredDataMap =
+		view.value.components.extactFromDataMap(selectedObject3D.value.name, dataMap.value) ?? {}
+
+	columnList.value = Object.entries(filteredDataMap).reduce(
 		(list, [key, value]) => {
 			list[0].push(key)
 			list[1].push(value.eng)

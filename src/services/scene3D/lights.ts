@@ -4,7 +4,7 @@ export type LightsProps = {
 	lightColor: THREE.ColorRepresentation
 }
 
-export const createLights = ({ lightColor }: LightsProps) => {
+export const createLights = (_props: LightsProps) => {
 	const ambientLight = new THREE.AmbientLight(0xdddddd, Math.PI / 2)
 	const spotLight = new THREE.SpotLight(undefined, Math.PI, undefined, 0.15, 1, 0)
 	const pointLight = new THREE.PointLight(undefined, Math.PI, undefined, 0)

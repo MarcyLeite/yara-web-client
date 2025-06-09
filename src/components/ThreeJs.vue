@@ -16,7 +16,6 @@ type Props = {
 }
 
 const { store } = defineProps<Props>()
-const { colorMap, view } = storeToRefs(store)
 
 type Emits = {
 	select: [object: Object3D | null]
@@ -25,18 +24,8 @@ type Emits = {
 const emit = defineEmits<Emits>()
 
 const onSelectCallback = (object3d: Object3D | null) => {
-	emit('select', object3d)
+	store.setSelectedObject3D(object3d)
 }
-
-watch([colorMap], () => {
-	if (!yara3DRef.value || !colorMap.value) return
-	yara3DRef.value.paint(colorMap.value)
-})
-
-watch([view], () => {
-	yara3DRef.value?.refresh(view.value?.scene.mode)
-	store.refreshColorMap()
-})
 
 onMounted(async () => {
 	const rootElement = threeJSRoot.value
@@ -48,6 +37,7 @@ onMounted(async () => {
 	rootElement.appendChild(yara3D.renderer.domElement)
 
 	yara3DRef.value = yara3D
+	store.setYara3D(yara3D)
 })
 
 onUnmounted(() => {

@@ -12,7 +12,6 @@ describe('[Service] Buffer', () => {
 	const { mockConnection } = createMockConnection()
 
 	const bufferStrategy = createBufferStrategy(mockConnection, ['A', 'B', 'C', 'D'])
-
 	const strategySpy = Sinon.spy(bufferStrategy, 'update')
 
 	beforeEach(() => {

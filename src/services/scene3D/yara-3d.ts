@@ -34,8 +34,8 @@ export const createYara3D = async (
 	interactionsCallback: InteractionCallbacks
 ) => {
 	const boxSize = extractSize(rootElement)
-	const originalModel = await loadModel(modelPath)
 
+	const originalModel = await loadModel(modelPath)
 	let model: THREE.Group
 
 	const { scene, camera } = createScene({
@@ -54,14 +54,16 @@ export const createYara3D = async (
 	const resizeObserver = createResizeObserver(rootElement, animate, sceneElements)
 	const interaction = addInteraction(rootElement, interactionsCallback, sceneElements, effects)
 
-	const refresh = (mode?: 'ghost') => {
+	const reset = (mode?: 'ghost') => {
 		scene.remove(model)
 		model = originalModel.clone(true)
 		if (mode === 'ghost') ghostifyModel(model)
 		scene.add(model)
+
+		interaction.refresh(model)
 	}
 
-	refresh()
+	reset()
 
 	const paint = (componentColorMap?: ComponentColorMap) => {
 		if (!componentColorMap) return
@@ -83,7 +85,7 @@ export const createYara3D = async (
 		resizeObserver.disconnect()
 	}
 
-	return { renderer, refresh, fps, paint, resizeObserver, dispose }
+	return { fps, renderer, resizeObserver, paint, reset, dispose }
 }
 
 export type Yara3D = Awaited<ReturnType<typeof createYara3D>>
