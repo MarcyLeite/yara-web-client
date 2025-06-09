@@ -66,7 +66,6 @@
 		@for $i from 0 through 10 {
 			.bg-#{$index}-alpha-#{$i*10} {
 				background: rgba($color, calc($i / 10));
-				@include animations.background-hover($color);
 				@include animations.background-focus($color);
 			}
 		}

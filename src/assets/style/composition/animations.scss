@@ -6,32 +6,10 @@
 		}
 	}
 
-	.jumpy {
-		&:hover > * {
+	.focus-icon-jump {
+		animation: jump 0.5s ease-in infinite;
+		&:focus > * {
 			animation: jump 0.5s ease-in infinite;
-		}
-	}
-
-	@keyframes jump {
-		0% {
-			translate: 0;
-			rotate: 0;
-		}
-		12% {
-			translate: -2px -1px;
-			rotate: -5deg;
-		}
-		50% {
-			translate: 2px -1px;
-			rotate: 5deg;
-		}
-		75% {
-			translate: 2px 1px;
-			rotate: 5deg;
-		}
-		100% {
-			translate: 0;
-			rotate: 0;
 		}
 	}
 
@@ -70,9 +48,6 @@
 			outline-width: 4;
 		}
 	}
-}
-
-@mixin background-hover($color) {
 }
 
 @mixin background-focus($color) {
