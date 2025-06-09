@@ -1,6 +1,6 @@
 <template>
 	<div class="yara p-relative">
-		<overlay>
+		<y-overlay>
 			<template #top-left>
 				<view-selector :store="yaraStore" />
 			</template>
@@ -11,7 +11,7 @@
 			<template #bottom-left>
 				<time-controller :store="yaraStore" />
 			</template>
-		</overlay>
+		</y-overlay>
 		<three-js :store="yaraStore" />
 	</div>
 </template>

@@ -3,24 +3,26 @@ import { mockView } from '../../tests/utils/mock-view'
 import { createPainter } from './painter'
 import { type Yara3D } from './scene3D/yara-3d'
 import { ComponentColorMap } from './view'
+import { WebGLRenderer } from 'three'
+import { DataMap } from './consumer/buffer'
 
 describe('[Service] Integration painter', () => {
-	const emtpyObject = {} as any
+	const emtpyObject = {}
 	const emptySpy = Sinon.spy()
 	const paintSpy = Sinon.spy()
 	const resetSpy = Sinon.spy()
 	const yara3D: Yara3D = {
 		fps: 0,
-		renderer: emtpyObject,
-		resizeObserver: emtpyObject,
+		renderer: emtpyObject as WebGLRenderer,
+		resizeObserver: emtpyObject as ResizeObserver,
 		paint: paintSpy,
 		reset: resetSpy,
 		dispose: emptySpy,
 	}
 
 	const mockConsumerUpdater = {
-		fixedDataMap: {} as any,
-		differenceDataMap: {} as any,
+		fixedDataMap: {} as DataMap,
+		differenceDataMap: {} as DataMap,
 		view: mockView,
 		setMoment: emptySpy,
 		dispose: emptySpy,

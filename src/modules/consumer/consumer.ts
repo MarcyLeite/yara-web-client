@@ -1,7 +1,6 @@
 import { createBuffer, type DataMap } from './buffer'
 import type { BufferStrategy } from './buffer-strategy'
 import type { Buffer } from './buffer'
-import type { Optional } from '@/utils/types'
 
 /**
  * Abstraction of a Consumer that will create a buffer and updated based on time.

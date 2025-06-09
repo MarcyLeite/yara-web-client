@@ -1,5 +1,5 @@
 <template>
-	<pannel>
+	<y-pannel>
 		<div class="d-flex flex-column pa-3">
 			<div class="d-flex ga-2 text-subtitle-1 justify-center">
 				<div class="text-capitalize">{{ month }}</div>
@@ -14,7 +14,7 @@
 				<span>Live</span>
 			</div>
 		</div>
-	</pannel>
+	</y-pannel>
 </template>
 
 <script setup lang="ts">

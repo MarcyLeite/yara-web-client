@@ -30,7 +30,7 @@ export type ColorMapperType = {
 	 * @param genericData
 	 * @returns ColorString
 	 */
-	getColor: (value: any) => HexColor | undefined
+	getColor: (value: unknown) => HexColor | undefined
 }
 
 export type ColorMapper = ColorMapperThermal

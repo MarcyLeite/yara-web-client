@@ -22,7 +22,7 @@ export const compareDataMap = (snapshotList: Snapshot[], point: GenericData, mom
 		}
 	}
 
-	for (const [key, value] of Object.entries(point) as [string, any][]) {
+	for (const [key, value] of Object.entries(point) as [string, string][]) {
 		value.should.equal(buildPoint[key])
 	}
 }
@@ -41,7 +41,7 @@ export const compareSnapshotInRange = async (
 
 		bufferValue.timestamp.should.equal(mockValue.timestamp)
 		for (const [key, value] of Object.entries(bufferValue.data)) {
-			;(mockValue.data[key] as any).should.equal(value)
+			;(mockValue.data[key] as string).should.equal(value)
 		}
 	}
 }
@@ -119,7 +119,7 @@ export const createMockConnection = (): {
 		mockConnection: {
 			getLastDataFrom: async (date, indexerList) => {
 				const timestampDate = date.getTime()
-				const indexerSnapshotMap: any = {}
+				const indexerSnapshotMap: Record<string, Snapshot> = {}
 				for (const snapshot of snapshotList) {
 					if (snapshot.timestamp > timestampDate) break
 

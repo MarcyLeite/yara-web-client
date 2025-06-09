@@ -38,7 +38,7 @@ export type Option =
 	| {
 			title: string
 			value: unknown
-			[key: string]: any
+			[key: string]: unknown
 	  }
 	| string
 
@@ -49,7 +49,7 @@ type Props = {
 }
 
 type Emit = {
-	select: [value: any]
+	select: [value: unknown]
 }
 
 const { options, width, default: defaultValue } = defineProps<Props>()

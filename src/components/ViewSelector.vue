@@ -1,12 +1,12 @@
 <template>
-	<pannel>
+	<y-pannel>
 		<div class="pa-2">
 			<div class="d-flex ga-4 align-center text-button">
 				VIEW
 				<y-select width="10rem" :options="options" :default="-1" @select="onSelect" />
 			</div>
 		</div>
-	</pannel>
+	</y-pannel>
 </template>
 
 <script setup lang="ts">
@@ -26,8 +26,9 @@ const noneOption = { title: 'None', value: -1 }
 
 const options = ref<Option[]>([noneOption])
 
-const onSelect = (option: number) => {
-	store.setView(option === -1 ? null : option)
+const onSelect = <T,>(option: T) => {
+	const value = option as number
+	store.setView(value === -1 ? null : value)
 }
 
 const update = () => {

@@ -1,5 +1,5 @@
 <template>
-	<pannel>
+	<y-pannel>
 		<div class="pa-2">
 			<div v-if="dataMap === null || !selectedObject3D">No Content</div>
 			<div v-else>
@@ -28,7 +28,7 @@
 				</div>
 			</div>
 		</div>
-	</pannel>
+	</y-pannel>
 </template>
 
 <script setup lang="ts">

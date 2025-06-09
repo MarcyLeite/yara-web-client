@@ -2,7 +2,7 @@
 
 <template>
 	<main class="yara-wrapper">
-		<yara />
+		<yara-core />
 	</main>
 </template>
 

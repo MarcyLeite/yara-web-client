@@ -54,7 +54,7 @@ export const createYara3D = async (
 	const resizeObserver = createResizeObserver(rootElement, animate, sceneElements)
 	const interaction = addInteraction(rootElement, interactionsCallback, sceneElements, effects)
 
-	const reset = (mode?: 'ghost') => {
+	const reset = (mode?: Yara3DOptions['mode']) => {
 		scene.remove(model)
 		model = originalModel.clone(true)
 		if (mode === 'ghost') ghostifyModel(model)

@@ -1,7 +1,7 @@
 <template>
-	<pannel>
+	<y-pannel>
 		<div class="pa-2 d-flex ga-4">
-			<clock v-model:model-value="moment" />
+			<y-clock v-model:model-value="moment" />
 			<div class="d-flex grow-1 flex-column align-center pa-4">
 				<div class="text-button text-bold">Controller</div>
 				<div class="d-flex grow-1 ga-2 align-center">
@@ -13,7 +13,7 @@
 				</div>
 			</div>
 		</div>
-	</pannel>
+	</y-pannel>
 </template>
 
 <script setup lang="ts">
