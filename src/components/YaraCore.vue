@@ -19,40 +19,13 @@
 <script setup lang="ts">
 import '@/assets/style/yara.scss'
 import { useYaraStore } from '@/stores/yara-store'
+import axios from 'axios'
 
 const yaraStore = useYaraStore()
 
-onMounted(() => {
-	yaraStore.setConfig({
-		modelPath: 'snowman.glb',
-		connection: {
-			type: 'influxdb',
-			org: 'dev',
-			bucket: 'dev',
-			token: 'dev-token',
-			url: 'http://localhost:8086',
-		},
-		views: [
-			{
-				display: 'Thermal',
-				mapper: {
-					type: 'thermal',
-					min: 0,
-					max: 100,
-				},
-				components: [
-					{
-						id: 'Body3',
-						indexerList: ['C'],
-					},
-					{
-						id: 'Body2',
-						indexerList: ['B', 'A'],
-					},
-				],
-			},
-		],
-	})
+onMounted(async () => {
+	const response = await axios.get('config.json')
+	yaraStore.setConfig(response.data)
 })
 
 onUnmounted(() => {
