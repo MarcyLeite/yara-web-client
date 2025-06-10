@@ -1,3 +1,4 @@
+import type { GenericType } from '../connection/connection'
 import type { Yara3DOptions } from '../scene3D/yara-3d'
 import {
 	createMapperThermal,
@@ -26,11 +27,11 @@ export type ColorMapperType = {
 	type: string
 	scene: Yara3DOptions
 	/**
-	 * Calculates color given generic data
-	 * @param genericData
+	 * Calculates color given generic type
+	 * @param GenericType
 	 * @returns ColorString
 	 */
-	getColor: (value: unknown) => HexColor | undefined
+	getColor: (value: GenericType) => HexColor
 }
 
 export type ColorMapper = ColorMapperThermal

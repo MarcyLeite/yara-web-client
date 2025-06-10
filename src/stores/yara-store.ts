@@ -12,19 +12,28 @@ import type { Object3D } from 'three'
 const BUFFER_SIZE = 60000
 
 export const useYaraStore = defineStore('yara-store', () => {
-	const moment = ref(new Date(import.meta.env.INITIAL_DATE))
+	const initialDate = import.meta.env.INITIAL_DATE
+		? new Date(import.meta.env.INITIAL_DATE)
+		: new Date()
+	const moment = ref(initialDate)
 
 	const viewListRef = ref<View[]>([])
 
 	const selectedObject3DRef = ref<Object3D | null>(null)
-	const dataMapRef = ref<DataMap>({})
-
 	const connectionRef = ref<Optional<Connection>>(null)
+	const modelPathRef = ref<Optional<string>>(null)
 
+	const dataMapRef = ref<DataMap>({})
 	const yara3DRef = ref<Optional<Yara3D>>(null)
 	const viewRef = ref<Optional<View>>(null)
 	const consumerUpdaterRef = ref<Optional<ConsumerUpdater>>(null)
 	const painterRef = ref<Optional<Painter>>(null)
+
+	const setConfig = (newConfig: Config) => {
+		viewListRef.value = newConfig.views.map((viewConfig) => createView(viewConfig))
+		connectionRef.value = createConnection(newConfig.connection)
+		modelPathRef.value = newConfig.modelPath
+	}
 
 	const setMoment = (newMoment: Date) => {
 		const prev = moment.value
@@ -42,11 +51,6 @@ export const useYaraStore = defineStore('yara-store', () => {
 
 		if (newMoment > prev) painter.update()
 		else painter.refresh()
-	}
-
-	const setConfig = (newConfig: Config) => {
-		viewListRef.value = newConfig.views.map((viewConfig) => createView(viewConfig))
-		connectionRef.value = createConnection(newConfig.connection)
 	}
 
 	const setYara3D = (yara3D?: Yara3D) => {
@@ -96,6 +100,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 
 	return {
 		moment,
+		modelPath: modelPathRef,
 		dataMap: dataMapRef,
 		view: viewRef,
 		viewList: viewListRef,

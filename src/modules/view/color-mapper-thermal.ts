@@ -1,5 +1,5 @@
 import { hueToHSL } from '../../utils/color-converter'
-import type { GenericData } from '../connection/connection'
+import type { GenericType } from '../connection/connection'
 import type { ColorMapperType, ColorMapperOptionsType } from './color-mapper'
 
 /**
@@ -34,8 +34,8 @@ export const createMapperThermal = ({
 		return Math.abs(hueValue - HUE_MAX)
 	}
 
-	const getColor = (value: GenericData) => {
-		if (typeof value !== 'number') return
+	const getColor = (value: GenericType) => {
+		if (typeof value !== 'number') return '#000000'
 		return hueToHSL(getHueValue(value))
 	}
 

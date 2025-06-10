@@ -6,6 +6,8 @@ export type ConnectionConfigType = {
 
 export type ConnectionConfig = ConnectionInfluxDBConfig
 
+export type GenericType = string | number | boolean
+
 /**
  * Unknown object returned by database.
  * @exemple
@@ -17,7 +19,7 @@ export type ConnectionConfig = ConnectionInfluxDBConfig
  * }
  * ```
  */
-export type GenericData = Record<string, unknown>
+export type GenericData = Record<string, GenericType>
 
 /**
  * Timestamped generic data object

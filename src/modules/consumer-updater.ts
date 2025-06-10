@@ -1,4 +1,4 @@
-import type { Optional } from '@/utils/types'
+import type { Optional } from '../utils/types'
 import type { DataMap } from './consumer/buffer'
 import { createConsumer } from './consumer/consumer'
 import { createBufferStrategy } from './consumer/buffer-strategy'
