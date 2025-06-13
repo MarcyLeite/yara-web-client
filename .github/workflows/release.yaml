@@ -1,0 +1,47 @@
+name: Trunk Merge
+
+on:
+  merge:
+    branches:
+      - main
+
+  prepare-release:
+    runs-on: ubuntu-latest
+    name: Prepare release
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: npm install
+        run: npm i
+
+      - name: Run analyze
+        run: npm run release-analyze
+
+      - name: Update package.json version
+        run: npm version --no-git-tag-version $(cat version)
+
+      - name: Update CHANGELOG.md
+        run: mv notes CHANGELOG.md
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "devops"
+          git config --global user.email "devops@users.noreply.github.com"
+          git add CHANGELOG.md package.json
+          git commit -m "🔖 Release version $(cat version)" -m "[skip ci]"
+
+      - name: Create tag
+        run: git tag v$(cat version)
+
+      - name: Push changes
+        run: |
+          git push
+          git push --tags
+
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+        run: gh release create v$VERSION -F CHANGELOG.md

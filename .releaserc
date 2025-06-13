@@ -1,0 +1,21 @@
+{
+	"plugins": [
+		["semantic-release-gitmoji", {
+			"releaseRules": {
+				"major": [ ":boom:" ],
+				"minor": [ ":sparkles:" ],
+				"patch": [
+					":bug:",
+					":ambulance:",
+					":lock:",
+					":lipstick:"
+				]
+			},
+			"releaseNotes": {
+					"partials": {
+						"commitTemplate": "[{{commit.short}}](https://github.com/{{owner}}/{{repo}}/commit/{{commit.short}}) {{subject}}"
+					}
+			}
+		}]
+	]
+}
