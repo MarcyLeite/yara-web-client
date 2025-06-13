@@ -24,7 +24,7 @@ import axios from 'axios'
 const yaraStore = useYaraStore()
 
 onMounted(async () => {
-	const response = await axios.get('config.json')
+	const response = await axios.get(`${import.meta.env.API_PATH}config.json`)
 	yaraStore.setConfig(response.data)
 })
 

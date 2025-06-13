@@ -1,0 +1,81 @@
+
+{
+	"modelPath": "snowman.glb",
+	"connection": {
+		"type": "demo",
+		"seed": "random seed",
+		"dataProperties": [
+			{
+				"indexer": "hot1",
+				"behavior": "hot",
+				"max": 100
+			},
+			{
+				"indexer": "hot2",
+				"behavior": "hot",
+				"max": 75,
+
+				"chance": 1
+			},
+			{
+				"indexer": "cold1",
+				"behavior": "cold",
+				"min": 0
+			},
+			{
+				"indexer": "cold2",
+				"behavior": "cold",
+
+				"chance": 1,
+				"min": 25
+			},
+			{
+				"indexer": "cold3",
+				"behavior": "cold",
+
+				"chance": 0.2,
+				"min": 0
+			},
+			{
+				"indexer": "walk",
+				"behavior": "walk"
+			}
+		]
+	},
+	"views": [
+		{
+			"display": "Thermal",
+			"mapper": {
+				"type": "thermal",
+				"min": 0,
+				"max": 100
+			},
+			"components": [
+				{
+					"id": "EyeRight",
+					"indexerList": ["hot1"]
+				},
+				{
+					"id": "EyeLeft",
+					"indexerList": ["hot2"]
+				},				{
+					"id": "Nose",
+					"indexerList": ["walk"]
+				},
+				{
+					"id": "Body1",
+					"indexerList": ["cold1"]
+				},
+				{
+					"id": "Body2",
+					"indexerList": ["cold2"]
+				},
+				{
+
+					"id": "Body3",
+					"indexerList": ["cold3"]
+				}
+			]
+		}
+	]
+}

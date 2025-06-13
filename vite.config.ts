@@ -8,8 +8,10 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => {
-	const INITIAL_DATE = mode !== 'production' ? '24 Dec 1997 12:00:15 GMT' : ''
+export default defineConfig(() => {
+	const INITIAL_DATE = process.env.INITIAL_DATE ?? '24 Dec 1997 12:00:15 GMT'
+	const API_PATH = process.env.CONFIG_PATH ?? '/'
+
 	return {
 		plugins: [
 			vue(),
@@ -38,6 +40,7 @@ export default defineConfig(({ mode }) => {
 		},
 		define: {
 			'import.meta.env.INITIAL_DATE': JSON.stringify(INITIAL_DATE),
+			'import.meta.env.API_PATH': JSON.stringify(API_PATH),
 		},
 	}
 })
