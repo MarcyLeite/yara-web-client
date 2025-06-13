@@ -51,7 +51,7 @@ describe('[Service] Buffer Strategy', () => {
 		restartSpy.callCount.should.equal(1)
 		forwardSpy.callCount.should.equal(0)
 	})
-	it('Should update use forward method when update to a new moment in range', async () => {
+	it('Should update using forward method when update to a new moment in range', async () => {
 		const firstFrom = createDateFromShift(5)
 		const firstTo = createDateFromShift(15)
 
@@ -65,7 +65,7 @@ describe('[Service] Buffer Strategy', () => {
 		restartSpy.callCount.should.equal(1)
 		forwardSpy.callCount.should.equal(1)
 	})
-	it('Should update use restart method when update to a new moment after last data from snapshot', async () => {
+	it('Should not update return same snapshot when update to a moment after end of buffer', async () => {
 		const firstFrom = createDateFromShift(5)
 		const firstTo = createDateFromShift(15)
 
@@ -74,12 +74,14 @@ describe('[Service] Buffer Strategy', () => {
 		const from = createDateFromShift(20)
 		const to = createDateFromShift(30)
 
-		await bufferStrategy.update({ from, to, snapshotList })
+		const newSnaphostList = await bufferStrategy.update({ from, to, snapshotList })
 
-		restartSpy.callCount.should.equal(2)
+		snapshotList.should.equal(newSnaphostList)
+
+		restartSpy.callCount.should.equal(1)
 		forwardSpy.callCount.should.equal(0)
 	})
-	it('Should update use restart method when update to a new moment before first data from snapshot', async () => {
+	it('Should update using restart method when update to a new moment before first data from snapshot', async () => {
 		const firstFrom = createDateFromShift(10)
 		const firstTo = createDateFromShift(20)
 

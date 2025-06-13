@@ -106,7 +106,7 @@ export const createBufferStrategy = (
 			const end = lastSnapshot.timestamp
 
 			if (end < fromTime) {
-				return await useRestart()
+				return snapshotList
 			}
 
 			return await bufferStrategy.forward(snapshotList, from, to)

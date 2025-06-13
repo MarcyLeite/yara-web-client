@@ -1,11 +1,11 @@
+import { createDemoConnection, type ConnectionDemoConfig } from './connection-demo'
 import { createConnectionInfluxDB, type ConnectionInfluxDBConfig } from './connection-influxdb'
 
 export type ConnectionConfigType = {
 	type: string
 }
 
-export type ConnectionConfig = ConnectionInfluxDBConfig
-
+export type ConnectionConfig = ConnectionInfluxDBConfig | ConnectionDemoConfig
 export type GenericType = string | number | boolean
 
 /**
@@ -53,6 +53,8 @@ export type Connection = {
 export const createConnection = (config: ConnectionConfig) => {
 	if (config.type === 'influxdb') {
 		return createConnectionInfluxDB(config)
+	} else if (config.type === 'demo') {
+		return createDemoConnection(config)
 	}
 
 	throw new Error('Error')

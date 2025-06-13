@@ -109,8 +109,8 @@ export const updateBuffer = async (
 			})
 		: prevSnapshotList
 
-	const update = (options: Partial<BufferOptions>) => {
-		return updateBuffer(originalOptions, options, snapshotList)
+	const update = (newOptions: Partial<BufferOptions>) => {
+		return updateBuffer(options, newOptions, snapshotList)
 	}
 
 	const getSnapshot = (moment: Date) => {

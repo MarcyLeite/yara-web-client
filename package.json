@@ -18,7 +18,9 @@
 		"@mdi/js": "^7.4.47",
 		"axios": "^1.9.0",
 		"pinia": "^3.0.1",
+		"rand-seed": "^2.1.7",
 		"three": "^0.177.0",
+		"uuid-by-string": "^4.0.0",
 		"vue": "^3.5.13"
 	},
 	"devDependencies": {
