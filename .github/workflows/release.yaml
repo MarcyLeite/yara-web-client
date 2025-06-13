@@ -48,4 +48,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
-        run: gh release create v$VERSION -F CHANGELOG.md
+        run: gh release create v$(cat version) -F CHANGELOG.md
