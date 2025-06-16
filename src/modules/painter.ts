@@ -1,6 +1,6 @@
 import type { ConsumerUpdater } from './consumer-updater'
 import type { View } from './view'
-import type { Yara3D, Yara3DOptions } from './scene3D/yara-3d'
+import type { Yara3D } from './scene3D/yara-3d'
 
 export const createPainter = (consumerUpdater: ConsumerUpdater, view: View, yara3D: Yara3D) => {
 	const painter = {
@@ -8,6 +8,7 @@ export const createPainter = (consumerUpdater: ConsumerUpdater, view: View, yara
 			const differece = consumerUpdater.differenceDataMap
 			if (!differece) return
 			const colorMap = view.components.getColorMap(differece)
+
 			yara3D.paint(colorMap)
 		},
 
@@ -22,8 +23,8 @@ export const createPainter = (consumerUpdater: ConsumerUpdater, view: View, yara
 
 			yara3D.paint(colorMap)
 		},
-		reset: (mode?: Yara3DOptions['mode']) => {
-			yara3D.reset(mode)
+		reset: () => {
+			yara3D.reset(view)
 		},
 	}
 

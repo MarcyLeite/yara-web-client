@@ -74,6 +74,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 
 		painterRef.value?.reset()
 		consumerUpdaterRef.value?.dispose()
+		yara3D?.reset()
 
 		painterRef.value = null
 		consumerUpdaterRef.value = null
@@ -84,7 +85,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 		const consumerUpdater = await createConsumerUpdater(shiftedDate, connection, view, BUFFER_SIZE)
 		const painter = createPainter(consumerUpdater, view, yara3D)
 
-		painter.reset(view.scene.mode)
+		painter.reset()
 
 		consumerUpdater.setMoment(moment.value)
 		painter.refresh()

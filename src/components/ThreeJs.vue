@@ -22,7 +22,7 @@ const onSelectCallback = (object3d: Object3D | null) => {
 	store.setSelectedObject3D(object3d)
 }
 
-watch([modelPath], async () => {
+const loadComponent = async () => {
 	yara3DRef.value?.dispose()
 	const rootElement = threeJSRoot.value
 	if (!rootElement || !modelPath.value) return
@@ -34,12 +34,16 @@ watch([modelPath], async () => {
 			onSelectCallback,
 		}
 	)
+
 	rootElement.appendChild(yara3D.renderer.domElement)
 
 	yara3DRef.value = yara3D
 	store.setYara3D(yara3D)
-})
+}
 
+onMounted(loadComponent)
+
+watch([modelPath], loadComponent)
 onUnmounted(() => {
 	yara3DRef.value?.dispose()
 })
