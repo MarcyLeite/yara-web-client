@@ -15,6 +15,10 @@ jobs:
   release:
     runs-on: ubuntu-latest
     name: Release
+
+    outputs:
+      version: ${{ steps.export.outputs.version }}
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -56,6 +60,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
         run: gh release create v$(cat version) -F CHANGELOG.md
+      - name: Export version
+        id: export
+        run: echo "version=$(cat version) >> $GITHUB_OUTPUT"
+
   build-demo:
     needs: [release]
 
@@ -64,9 +72,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      - name: Update package.json version
+        env:
+          VERSION: ${{needs.release.outputs.version}}
+        run: npm version --no-git-tag-version $(cat version)
 
       - name: npm install
         run: npm i
