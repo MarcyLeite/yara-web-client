@@ -23,6 +23,10 @@
 				{
 					"id": "Body2",
 					"indexerList": ["B", "A"]
+				},
+				{
+					"id": "Nose",
+					"isHidden": true
 				}
 			]
 		}

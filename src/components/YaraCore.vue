@@ -31,7 +31,6 @@ const version = import.meta.env.VERSION
 const yaraStore = useYaraStore()
 
 onMounted(async () => {
-	console.log(`${import.meta.env.API_PATH}config.json`)
 	const response = await axios.get(`${import.meta.env.API_PATH}config.json`)
 	yaraStore.setConfig(response.data)
 })

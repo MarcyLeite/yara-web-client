@@ -58,9 +58,10 @@
 				{
 					"id": "EyeLeft",
 					"indexerList": ["hot2"]
-				},				{
+				},
+				{
 					"id": "Nose",
-					"indexerList": ["walk"]
+					"isHidden": true
 				},
 				{
 					"id": "Body1",
