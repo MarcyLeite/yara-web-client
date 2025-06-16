@@ -7,7 +7,7 @@ import { ghostifyModel, loadModel } from './load-model'
 import type { EffectComposer, OrbitControls } from 'three/examples/jsm/Addons.js'
 import { createResizeObserver } from './resize-observer'
 import { addInteraction, type InteractionCallbacks } from './interactions'
-import type { ComponentColorMap } from '../view'
+import type { ComponentColorMap, View } from '../view'
 
 export type Yara3DOptions = {
 	mode: 'ghost'
@@ -54,12 +54,28 @@ export const createYara3D = async (
 	const resizeObserver = createResizeObserver(rootElement, animate, sceneElements)
 	const interaction = addInteraction(rootElement, interactionsCallback, sceneElements, effects)
 
-	const reset = (mode?: Yara3DOptions['mode']) => {
+	const reset = (view?: View) => {
 		scene.remove(model)
 		model = originalModel.clone(true)
-		if (mode === 'ghost') ghostifyModel(model)
-		scene.add(model)
 
+		if (!view) {
+			scene.add(model)
+			interaction.refresh(model)
+			return
+		}
+
+		const { mode } = view.scene
+		const { hidden: hiddenList } = view.components
+
+		if (mode === 'ghost') ghostifyModel(model)
+
+		for (const hidden of hiddenList) {
+			const object3d = model.getObjectByName(hidden)
+			if (!object3d) continue
+			object3d.visible = false
+		}
+
+		scene.add(model)
 		interaction.refresh(model)
 	}
 

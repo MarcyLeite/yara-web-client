@@ -19,6 +19,7 @@ export const ghostifyModel = (group: THREE.Group) => {
 const updateOjbect3D = (object3D: THREE.Mesh) => {
 	object3D.material = createTransparentMaterial(0xffffff)
 }
+
 export const loadModel = (modelPath: string) => {
 	const loader = new GLTFLoader()
 	return new Promise<THREE.Group>((resolve) => {

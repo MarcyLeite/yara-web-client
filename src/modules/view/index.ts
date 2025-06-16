@@ -45,6 +45,9 @@ export type ViewConfig = {
 	 * @property list of component configuration
 	 */
 	components: ViewComponentConfig[]
+	/**
+	 * @property yara 3d display mode
+	 */
 }
 
 /**
