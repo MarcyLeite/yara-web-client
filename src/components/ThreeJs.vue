@@ -27,9 +27,13 @@ watch([modelPath], async () => {
 	const rootElement = threeJSRoot.value
 	if (!rootElement || !modelPath.value) return
 
-	const yara3D = await createYara3D(threeJSRoot.value, modelPath.value, {
-		onSelectCallback,
-	})
+	const yara3D = await createYara3D(
+		threeJSRoot.value,
+		`${import.meta.env.API_PATH}${modelPath.value}`,
+		{
+			onSelectCallback,
+		}
+	)
 	rootElement.appendChild(yara3D.renderer.domElement)
 
 	yara3DRef.value = yara3D
