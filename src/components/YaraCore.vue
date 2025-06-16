@@ -4,7 +4,11 @@
 			<template #top-left>
 				<view-selector :store="yaraStore" />
 			</template>
-
+			<template #bottom>
+				<div class="text-text-alpha-50">
+					{{ ['Yara', mode === 'production' ? '' : mode, `v${version}`].join(' ') }}
+				</div>
+			</template>
 			<template #top-right>
 				<datamap-visualizer :store="yaraStore" />
 			</template>
@@ -21,9 +25,13 @@ import '@/assets/style/yara.scss'
 import { useYaraStore } from '@/stores/yara-store'
 import axios from 'axios'
 
+const mode = import.meta.env.MODE
+const version = import.meta.env.VERSION
+
 const yaraStore = useYaraStore()
 
 onMounted(async () => {
+	console.log(`${import.meta.env.API_PATH}config.json`)
 	const response = await axios.get(`${import.meta.env.API_PATH}config.json`)
 	yaraStore.setConfig(response.data)
 })

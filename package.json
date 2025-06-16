@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "vite --host",
 		"build": "run-p type-check \"build-only {@}\" --",
-		"build:demo": "vite build --mode=demo && cp dist/config-demo.json dist/config.json",
+		"build:demo": "vite build --mode=demo --base=/yara-web-client && cp dist/config-demo.json dist/config.json",
 		"preview": "vite preview --host",
 		"build-only": "vite build",
 		"type-check": "vue-tsc --build",
