@@ -126,8 +126,9 @@ jobs:
         run: gh release create v$VERSION -F CHANGELOG.md
 
   release-image:
-    needs: [update]
+    name: Release image in Docker Hub
     runs-on: ubuntu-latest
+    needs: [update]
 
     env:
       VERSION: ${{ needs.update.outputs.version }}
