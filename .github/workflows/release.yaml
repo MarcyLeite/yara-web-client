@@ -12,9 +12,9 @@ on:
     branches:
       - main
 jobs:
-  release:
+  analyze:
     runs-on: ubuntu-latest
-    name: Release
+    name: Analyze
 
     outputs:
       version: ${{ steps.export.outputs.version }}
@@ -24,31 +24,94 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: npm install
-        run: npm i
+      - run: npm ci
 
       - name: Run analyze
         run: npm run release-analyze
 
-      - run: ls
-      - run: cat version
-      - run: cat notes
+      - name: Export version
+        id: export
+        run: echo "version=$(cat version)" >> "$GITHUB_OUTPUT"
+
+      - name: Export CHANGELOG.md
+        uses: actions/upload-artifact@v4
+        with:
+          name: notes
+          path: notes
+
+  update:
+    name: Update
+    runs-on: ubuntu-latest
+    needs: [analyze]
+    env:
+      VERSION: ${{ needs.analyze.outputs.version }}
+    if: ${{ needs.analyze.outputs.version != '' }}
+
+    outputs:
+      version: ${{ steps.export.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Download CHANGELOG
+        uses: actions/download-artifact@v4
+        with:
+          name: notes
+
+      - run: mv notes CHANGELOG.md
 
       - name: Update package.json version
-        run: npm version --no-git-tag-version $(cat version)
+        run: npm version --no-git-tag-version $VERSION
 
-      - name: Update CHANGELOG.md
-        run: mv notes CHANGELOG.md
+      - name: Export CHANGELOG.md
+        uses: actions/upload-artifact@v4
+        with:
+          name: CHANGELOG
+          path: CHANGELOG.md
+
+      - name: Export package.json
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-json
+          path: package.json
+
+      - name: Export version
+        id: export
+        run: echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+  publish:
+    name: Publish tags and create GH Release
+    runs-on: ubuntu-latest
+    needs: [update]
+
+    env:
+      VERSION: ${{ needs.update.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download CHANGELOG
+        uses: actions/download-artifact@v4
+        with:
+          name: CHANGELOG
+
+      - name: Download package.json
+        uses: actions/download-artifact@v4
+        with:
+          name: package-json
 
       - name: Commit changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md package.json
-          git commit -m "🔖 Release version $(cat version)" -m "[skip ci]"
+          git commit -m "🔖 Release version $VERSION" -m "[skip ci]"
 
       - name: Create tag
-        run: git tag v$(cat version)
+        run: git tag v$VERSION
 
       - name: Push changes
         run: |
@@ -59,31 +122,26 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
-        run: gh release create v$(cat version) -F CHANGELOG.md
-      - name: Export version
-        id: export
-        run: echo "version=$(cat version) >> $GITHUB_OUTPUT"
+        run: gh release create v$VERSION -F CHANGELOG.md
 
-  build-demo:
-    needs: [release]
+  release-demo:
+    needs: [update]
 
     runs-on: ubuntu-latest
-    name: Deploy demo (GitHub PAges)
+    name: Deploy demo (GitHub Pages)
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: Update package.json version
-        env:
-          VERSION: ${{needs.release.outputs.version}}
-        run: npm version --no-git-tag-version $(cat version)
+      - name: Download package.json
+        uses: actions/download-artifact@v4
+        with:
+          name: package-json
 
-      - name: npm install
-        run: npm i
+      - run: npm ci
 
       - name: Build demo
         run: npm run build:demo
