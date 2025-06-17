@@ -54,6 +54,10 @@ export const createYara3D = async (
 	const resizeObserver = createResizeObserver(rootElement, animate, sceneElements)
 	const interaction = addInteraction(rootElement, interactionsCallback, sceneElements, effects)
 
+	const resetCamera = () => {
+		orbitControls.target = new THREE.Vector3(0, 0, 0)
+	}
+
 	const reset = (view?: View) => {
 		scene.remove(model)
 		model = originalModel.clone(true)
@@ -101,7 +105,7 @@ export const createYara3D = async (
 		resizeObserver.disconnect()
 	}
 
-	return { fps, renderer, resizeObserver, paint, reset, dispose }
+	return { fps, renderer, resizeObserver, resetCamera, paint, reset, dispose }
 }
 
 export type Yara3D = Awaited<ReturnType<typeof createYara3D>>
