@@ -1,5 +1,5 @@
-# [v0.1.2](https://github.com/MarcyLeite/yara-web-client/compare/v0.1.1...v0.1.2) (2025-06-17)
+# [v0.1.3](https://github.com/MarcyLeite/yara-web-client/compare/v0.1.2...v0.1.3) (2025-06-17)
 
-## 🐛 Bug Fixes
-- [a4b0a42](https://github.com/MarcyLeite/yara-web-client/commit/a4b0a42)  Fix component with isHidden being visible
+## 🚑 Critical Hotfixes
+- [04d6c80](https://github.com/MarcyLeite/yara-web-client/commit/04d6c80) ️ Fix deployment initial date not being live
 
