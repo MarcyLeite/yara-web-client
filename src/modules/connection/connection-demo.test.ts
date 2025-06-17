@@ -3,7 +3,7 @@ import { createDateFromShift, INITIAL_DATE } from '../../../tests/utils/mock-con
 import { Snapshot } from './connection'
 import { getRandomInt } from '../../utils/math'
 
-describe.only('[Connection] Connection Demo', async () => {
+describe('[Connection] Connection Demo', async () => {
 	const connection = createDemoConnection({
 		type: 'demo',
 		seed: 'random seed',

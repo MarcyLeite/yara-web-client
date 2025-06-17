@@ -13,7 +13,31 @@ on:
       - main
 
 jobs:
+  ci:
+    runs-on: ubuntu-latest
+    name: CI
+
+    outputs:
+      version: ${{ steps.export.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+
+      - name: Run Build
+        run: npm run build
+
+      - name: Run Test
+        run: npm run test
+
+      - name: Run Lint
+        run: npm run lint
+
   analyze:
+    needs: [ci]
     runs-on: ubuntu-latest
     name: Analyze
 
@@ -107,7 +131,7 @@ jobs:
       - name: Commit changes
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md package.json
           git commit -m "🔖 Release version $VERSION" -m "[skip ci]"
 
@@ -124,6 +148,35 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
         run: gh release create v$VERSION -F CHANGELOG.md
+
+  update-parent:
+    needs: [release-gh, update]
+    name: Update Parent
+    runs-on: ubuntu-latest
+
+    env:
+      VERSION: ${{ needs.update.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: marcyleite/yara
+          token: ${{ secrets.PARENT_REPO_GITHUB_TOKEN  }}
+          submodules: true
+
+      - name: Pull & update submodules recursively
+        run: |
+          git submodule update --init --recursive
+          git submodule update --recursive --remote
+
+      - name: Commit
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add --all
+
+          git commit -m ":truck: Update web client version $VERSION" || echo "No changes to commit"
+          git push
 
   release-image:
     name: Release image in Docker Hub
