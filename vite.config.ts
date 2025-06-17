@@ -10,7 +10,7 @@ import Components from 'unplugin-vue-components/vite'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
 	const INITIAL_DATE = process.env.INITIAL_DATE ?? '24 Dec 1997 12:00:15 GMT'
-	const API_PATH = (process.env.CONFIG_PATH ?? mode === 'demo') ? '/yara-web-client/' : '/'
+	const API_PATH = process.env.API_PATH ?? (mode === 'demo' ? '/yara-web-client/' : '/')
 
 	return {
 		plugins: [
