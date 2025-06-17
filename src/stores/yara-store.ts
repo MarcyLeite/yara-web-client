@@ -106,6 +106,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 		view: viewRef,
 		viewList: viewListRef,
 		selectedObject3D: selectedObject3DRef,
+		yara3d: yara3DRef,
 		setMoment,
 		setConfig,
 		setYara3D,

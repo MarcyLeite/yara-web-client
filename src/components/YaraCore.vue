@@ -13,7 +13,10 @@
 				<datamap-visualizer :store="yaraStore" />
 			</template>
 			<template #bottom-left>
-				<time-controller :store="yaraStore" />
+				<div class="d-flex flex-column ga-4">
+					<y-interaction-section :store="yaraStore" />
+					<time-controller :store="yaraStore" />
+				</div>
 			</template>
 		</y-overlay>
 		<three-js :store="yaraStore" />
