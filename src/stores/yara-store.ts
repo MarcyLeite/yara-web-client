@@ -36,6 +36,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 	}
 
 	const setMoment = (newMoment: Date) => {
+		if(newMoment.getTime() > Date.now()) newMoment = new Date()
 		const prev = moment.value
 		moment.value = newMoment
 
