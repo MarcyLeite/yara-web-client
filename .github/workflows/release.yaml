@@ -2,21 +2,15 @@ name: Release
 
 permissions:
   contents: write
-  issues: write
-  pull-requests: write
-  pages: write
-  id-token: write
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+  schedule:
+    - cron: 0 10 * * *
 
 jobs:
-  ci:
+  setup:
     runs-on: ubuntu-latest
-    name: CI
-
     outputs:
       version: ${{ steps.export.outputs.version }}
 
@@ -25,122 +19,41 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Run Build
-        run: npm run build
-
-      - name: Run Test
-        run: npm run test
-
-      - name: Run Lint
-        run: npm run lint
-
-  analyze:
-    needs: [ci]
-    runs-on: ubuntu-latest
-    name: Analyze
-
-    outputs:
-      version: ${{ steps.export.outputs.version }}
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - run: npm ci
-
-      - name: Run analyze
-        run: npm run release-analyze
-
-      - name: Export version
+      - name: Get new version
         id: export
-        run: echo "version=$(cat version)" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(npm run analyze-release | tail -n -1)" >> "$GITHUB_OUTPUT"
 
-      - name: Export CHANGELOG.md
-        uses: actions/upload-artifact@v4
-        with:
-          name: notes
-          path: notes
-
-  update:
-    name: Update
+  do-release:
     runs-on: ubuntu-latest
-    needs: [analyze]
+    needs: [setup]
+    if: ${{ needs.setup.outputs.version != '' }}
+
     env:
-      VERSION: ${{ needs.analyze.outputs.version }}
-    if: ${{ needs.analyze.outputs.version != '' }}
-
-    outputs:
-      version: ${{ steps.export.outputs.version }}
+      VERSION: ${{ needs.setup.outputs.version }}
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Download CHANGELOG
-        uses: actions/download-artifact@v4
-        with:
-          name: notes
-
-      - run: mv notes CHANGELOG.md
-
-      - name: Update package.json version
-        run: npm version --no-git-tag-version $VERSION
-
-      - name: Export CHANGELOG.md
-        uses: actions/upload-artifact@v4
-        with:
-          name: CHANGELOG
-          path: CHANGELOG.md
-
-      - name: Export package.json
-        uses: actions/upload-artifact@v4
-        with:
-          name: package-json
-          path: package.json
-
-      - name: Export version
-        id: export
-        run: echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: New release
+        run: echo $VERSION
 
   release-gh:
     name: Publish tags and create GH Release
     runs-on: ubuntu-latest
-    needs: [update]
+    needs: [setup, do-release]
 
     env:
-      VERSION: ${{ needs.update.outputs.version }}
+      VERSION: ${{ needs.setup.outputs.version }}
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Download CHANGELOG
-        uses: actions/download-artifact@v4
-        with:
-          name: CHANGELOG
-
-      - name: Download package.json
-        uses: actions/download-artifact@v4
-        with:
-          name: package-json
-
-      - name: Commit changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add CHANGELOG.md package.json
-          git commit -m "🔖 Release version $VERSION" -m "[skip ci]"
 
       - name: Create tag
         run: git tag v$VERSION
 
       - name: Push changes
         run: |
-          git push
           git push --tags
 
       - name: Create release
@@ -150,12 +63,12 @@ jobs:
         run: gh release create v$VERSION -F CHANGELOG.md
 
   update-parent:
-    needs: [release-gh, update]
+    needs: [setup, do-release]
     name: Update Parent
     runs-on: ubuntu-latest
 
     env:
-      VERSION: ${{ needs.update.outputs.version }}
+      VERSION: ${{ needs.setup.outputs.version }}
 
     steps:
       - uses: actions/checkout@v4
@@ -181,10 +94,10 @@ jobs:
   release-image:
     name: Release image in Docker Hub
     runs-on: ubuntu-latest
-    needs: [update]
+    needs: [setup, do-release]
 
     env:
-      VERSION: ${{ needs.update.outputs.version }}
+      VERSION: ${{ needs.setup.outputs.version }}
 
     steps:
       - uses: actions/checkout@v4
@@ -211,7 +124,7 @@ jobs:
             marcyleite/yara-web-client:latest
 
   deploy-demo:
-    needs: [update]
+    needs: [setup, do-release]
 
     runs-on: ubuntu-latest
     name: Deploy demo (GitHub Pages)
