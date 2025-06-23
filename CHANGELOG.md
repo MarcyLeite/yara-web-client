@@ -1,5 +1,8 @@
-# [v0.2.1](https://github.com/MarcyLeite/yara-web-client/compare/v0.2.0...v0.2.1) (2025-06-18)
+# [v0.3.0](https://github.com/MarcyLeite/yara-web-client/compare/v0.2.1...v0.3.0) (2025-06-23)
+
+## ✨ New Features
+- [b37097e](https://github.com/MarcyLeite/yara-web-client/commit/b37097e)  Fake feat
 
 ## 🚑 Critical Hotfixes
-- [23bb35c](https://github.com/MarcyLeite/yara-web-client/commit/23bb35c) ️ Fix jumping forward going over current time
+- [9a47761](https://github.com/MarcyLeite/yara-web-client/commit/9a47761) ️ Fake fix
 
