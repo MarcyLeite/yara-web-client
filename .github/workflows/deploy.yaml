@@ -135,25 +135,27 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: updated-files
+          merge-multiple: true
           path: .
 
+      - run: ls
       - name: Commit changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md package.json package-lock.json
-          git commit -m "🔖 Release version $VERSION" -m "[skip ci]"
+          git commit -m "🔖 Release version $VERSION" || echo "No changes"
 
       - name: Create tag
         run: git tag v$VERSION
 
       - name: Push changes
         run: |
-          git push
-          git push --tags
+          git push || echo "No changes"
+          git push --tags || echo "No changes"
 
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
-        run: gh release create v$VERSION -F CHANGELOG.md
+        run: gh release create v$VERSION -F CHANGELOG.md || gh release edit v$VERSION -F CHANGELOG.md
