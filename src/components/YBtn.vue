@@ -5,7 +5,7 @@
 				className,
 				!bgColor || bgColor === 'transparent' ? '' : `bg-${bgColor}`,
 				elevation ? `elevation-${elevation}` : '',
-				'p-relative pa-2 rounded-pill hover shake',
+				'text-light p-relative pa-2 rounded-pill hover shake',
 			]"
 			@click="(e) => emit('click', e)"
 		>

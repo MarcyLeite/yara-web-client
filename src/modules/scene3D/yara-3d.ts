@@ -3,7 +3,7 @@ import { createScene } from './scene'
 import { createOrbitControls } from './orbit-controls'
 import { createRenderer, startAnimationLoop } from './renderer'
 import { createEffects } from './effects'
-import { ghostifyModel, loadModel } from './load-model'
+import { doRecursily, ghostifyModel, loadModel } from './load-model'
 import type { EffectComposer, OrbitControls } from 'three/examples/jsm/Addons.js'
 import { createResizeObserver } from './resize-observer'
 import { addInteraction, type InteractionCallbacks } from './interactions'
@@ -38,6 +38,11 @@ export const createYara3D = async (
 	const originalModel = await loadModel(modelPath)
 	let model: THREE.Group
 
+	const objectIdList: string[] = []
+	doRecursily(originalModel, (mesh) => {
+		objectIdList.push(mesh.name)
+	})
+
 	const { scene, camera } = createScene({
 		boxSize,
 		backgroundColor: 0xffffff,
@@ -58,6 +63,14 @@ export const createYara3D = async (
 		orbitControls.target = new THREE.Vector3(0, 0, 0)
 	}
 
+	const hideObjects = (hiddenList: string[]) => {
+		for (const objectId of objectIdList) {
+			const object3d = model.getObjectByName(objectId)
+			if (!object3d) continue
+			object3d.visible = !hiddenList.includes(objectId)
+		}
+	}
+
 	const reset = (view?: View) => {
 		scene.remove(model)
 		model = originalModel.clone(true)
@@ -69,15 +82,9 @@ export const createYara3D = async (
 		}
 
 		const { mode } = view.scene
-		const { hidden: hiddenList } = view.components
+		hideObjects(view.components.hidden)
 
 		if (mode === 'ghost') ghostifyModel(model)
-
-		for (const hidden of hiddenList) {
-			const object3d = model.getObjectByName(hidden)
-			if (!object3d) continue
-			object3d.visible = false
-		}
 
 		scene.add(model)
 		interaction.refresh(model)
@@ -105,7 +112,17 @@ export const createYara3D = async (
 		resizeObserver.disconnect()
 	}
 
-	return { fps, renderer, resizeObserver, resetCamera, paint, reset, dispose }
+	return {
+		fps,
+		renderer,
+		resizeObserver,
+		resetCamera,
+		hideObjects,
+		objectIdList,
+		paint,
+		reset,
+		dispose,
+	}
 }
 
 export type Yara3D = Awaited<ReturnType<typeof createYara3D>>
