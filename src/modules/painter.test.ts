@@ -16,6 +16,8 @@ describe('[Service] Integration painter', () => {
 		renderer: emtpyObject as WebGLRenderer,
 		resizeObserver: emtpyObject as ResizeObserver,
 		resetCamera: emptySpy,
+		hideObjects: emptySpy,
+		objectIdList: [],
 		paint: paintSpy,
 		reset: resetSpy,
 		dispose: emptySpy,
