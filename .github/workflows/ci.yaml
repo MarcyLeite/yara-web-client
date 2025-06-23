@@ -122,8 +122,8 @@ jobs:
 
       - name: Checkout release branch
         run: |
-          git checkout release || git checkout -b release
-          git rebase main -f
+          git checkout -b release
+          git merge main
 
       - uses: actions/download-artifact@v4
         with:
@@ -138,7 +138,7 @@ jobs:
           git commit -m "🔖 Release version $VERSION"
 
       - name: Push changes
-        run: git push origin release
+        run: git push -f origin release
 
       - name: Create PR
         run: |
