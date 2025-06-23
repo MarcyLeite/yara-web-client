@@ -83,7 +83,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -116,17 +115,20 @@ jobs:
     if: ${{ needs.check-release.outputs.version != '' }}
     env:
       VERSION: ${{ needs.check-release.outputs.version }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: updated-files
-          path: .
+      - uses: actions/checkout@v4
 
       - name: Checkout release branch
         run: |
           git checkout release || git checkout -b release
           git rebase main -f
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: updated-files
+          path: .
 
       - name: Commit changes
         run: |
@@ -137,3 +139,13 @@ jobs:
 
       - name: Push changes
         run: git push origin release
+
+      - name: Create PR
+        run: |
+          PR_EXISTS=$(gh pr list --base "main" --head "release" --json number --jq 'length')
+          if [ "$PR_EXISTS" -eq 0 ]; then
+            gh pr create --base "main" --head "release" --title "🔖 Release version $VERSION" --body-file CHANGELOG.md
+          else
+            PR_NUMBER=$(gh pr list --base "main" --head "release" --json number --jq '.[0].number')
+            gh pr edit "$PR_NUMBER" --title "🔖 Release version $VERSION" --body-file CHANGELOG.md
+          fi
