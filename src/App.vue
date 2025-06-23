@@ -1,5 +1,5 @@
 <script setup lang="ts">
-console.log('fix')
+console.log('feat')
 </script>
 
 <template>
