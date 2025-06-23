@@ -71,9 +71,9 @@ jobs:
         run: npm run lint
 
   update-parent:
-    needs: [build, test, lint, type-check]
     name: Update Parent
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v4
