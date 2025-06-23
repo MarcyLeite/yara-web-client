@@ -1,6 +1,4 @@
-<script setup lang="ts">
-console.log('feat')
-</script>
+<script setup lang="ts"></script>
 
 <template>
 	<main class="yara-wrapper">

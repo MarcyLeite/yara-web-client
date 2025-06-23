@@ -15,17 +15,19 @@ export const useYaraStore = defineStore('yara-store', () => {
 	const initialDate = import.meta.env.INITIAL_DATE
 		? new Date(import.meta.env.INITIAL_DATE)
 		: new Date()
-	const moment = ref(initialDate)
 
 	const viewListRef = ref<View[]>([])
 
-	const selectedObject3DRef = ref<Object3D | null>(null)
 	const connectionRef = ref<Optional<Connection>>(null)
 	const modelPathRef = ref<Optional<string>>(null)
 
-	const dataMapRef = ref<DataMap>({})
-	const yara3DRef = ref<Optional<Yara3D>>(null)
+	const moment = ref(initialDate)
 	const viewRef = ref<Optional<View>>(null)
+	const dataMapRef = ref<DataMap>({})
+	const selectedObject3DRef = ref<Object3D | null>(null)
+	const hiddenObjectListRef = ref<string[]>([])
+
+	const yara3DRef = ref<Optional<Yara3D>>(null)
 	const consumerUpdaterRef = ref<Optional<ConsumerUpdater>>(null)
 	const painterRef = ref<Optional<Painter>>(null)
 
@@ -36,7 +38,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 	}
 
 	const setMoment = (newMoment: Date) => {
-		if(newMoment.getTime() > Date.now()) newMoment = new Date()
+		if (newMoment.getTime() > Date.now()) newMoment = new Date()
 		const prev = moment.value
 		moment.value = newMoment
 
@@ -62,6 +64,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 	const setView = async (index: number | null) => {
 		const view = viewListRef.value[index ?? -1] ?? null
 		viewRef.value = view
+		hiddenObjectListRef.value = view ? [...view.components.hidden] : []
 	}
 
 	const setSelectedObject3D = (object3D: Object3D | null) => {
@@ -96,6 +99,14 @@ export const useYaraStore = defineStore('yara-store', () => {
 		painterRef.value = painter
 	})
 
+	watch(
+		[hiddenObjectListRef],
+		() => {
+			yara3DRef.value?.hideObjects(hiddenObjectListRef.value)
+		},
+		{ deep: true }
+	)
+
 	const dispose = () => {
 		consumerUpdaterRef.value?.dispose()
 	}
@@ -107,6 +118,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 		view: viewRef,
 		viewList: viewListRef,
 		selectedObject3D: selectedObject3DRef,
+		hiddenObjectList: hiddenObjectListRef,
 		yara3d: yara3DRef,
 		setMoment,
 		setConfig,
