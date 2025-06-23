@@ -16,6 +16,7 @@ declare module 'vue' {
     YBtn: typeof import('./components/YBtn.vue')['default']
     YClock: typeof import('./components/YClock.vue')['default']
     YDivider: typeof import('./components/YDivider.vue')['default']
+    YHiddenList: typeof import('./components/YHiddenList.vue')['default']
     YIcon: typeof import('./components/YIcon.vue')['default']
     YInteractionSection: typeof import('./components/YInteractionSection.vue')['default']
     YOverlay: typeof import('./components/YOverlay.vue')['default']

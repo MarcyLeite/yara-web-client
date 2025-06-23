@@ -18,6 +18,11 @@
 					<time-controller :store="yaraStore" />
 				</div>
 			</template>
+			<template #bottom-right>
+				<div class="d-flex flex-column ga-4">
+					<y-hidden-list :store="yaraStore" />
+				</div>
+			</template>
 		</y-overlay>
 		<three-js :store="yaraStore" />
 	</div>
