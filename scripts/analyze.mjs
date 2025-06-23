@@ -1,8 +1,13 @@
 import semanticRelease from 'semantic-release'
 import { writeFileSync } from 'fs'
+import { execSync } from 'child_process'
 
 const getReleaseData = async () => {
-	const meta = await semanticRelease({ dryRun: true, ci: false, branches: ['main'] })
+	const meta = await semanticRelease({
+		dryRun: true,
+		ci: false,
+		branches: ['main', 'release'],
+	})
 
 	if (!meta) return
 	return meta.nextRelease
@@ -10,10 +15,14 @@ const getReleaseData = async () => {
 
 const writeArtifacts = async () => {
 	const data = await getReleaseData()
-	if (!data) return
+	if (!data) {
+		console.log('')
+		return
+	}
 
-	writeFileSync('version', data.version)
-	writeFileSync('notes', data.notes)
+	execSync(`npm version --no-git-tag-version --allow-same-version=true ${data.version}`)
+	writeFileSync('CHANGELOG.md', data.notes)
+	console.log(data.version)
 }
 
 writeArtifacts()

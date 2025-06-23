@@ -13,7 +13,7 @@
 		"lint": "eslint . --fix",
 		"format": "prettier --write . && npm run lint",
 		"test": "mocha",
-		"release-analyze": "node ./scripts/analyze.mjs"
+		"analyze-release": "node ./scripts/analyze.mjs"
 	},
 	"dependencies": {
 		"@influxdata/influxdb-client": "^1.35.0",
