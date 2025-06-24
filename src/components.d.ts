@@ -13,6 +13,7 @@ declare module 'vue' {
     TimeController: typeof import('./components/TimeController.vue')['default']
     ViewSelector: typeof import('./components/ViewSelector.vue')['default']
     YaraCore: typeof import('./components/YaraCore.vue')['default']
+    YaraViewPannel: typeof import('./components/YaraViewPannel.vue')['default']
     YBtn: typeof import('./components/YBtn.vue')['default']
     YClock: typeof import('./components/YClock.vue')['default']
     YDivider: typeof import('./components/YDivider.vue')['default']

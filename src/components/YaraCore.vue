@@ -2,7 +2,9 @@
 	<div class="yara p-relative">
 		<y-overlay>
 			<template #top-left>
-				<view-selector :store="yaraStore" />
+				<div>
+					<yara-view-pannel :store="yaraStore" />
+				</div>
 			</template>
 			<template #bottom>
 				<div class="text-text-alpha-50">
@@ -18,11 +20,7 @@
 					<time-controller :store="yaraStore" />
 				</div>
 			</template>
-			<template #bottom-right>
-				<div class="d-flex flex-column ga-4">
-					<y-hidden-list :store="yaraStore" />
-				</div>
-			</template>
+			<template #bottom-right> </template>
 		</y-overlay>
 		<three-js :store="yaraStore" />
 	</div>

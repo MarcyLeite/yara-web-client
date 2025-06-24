@@ -1,6 +1,10 @@
 <template>
 	<div class="d-flex icon">
-		<svg viewBox="0 0 24 24" :style="{ height: `${size ?? '1.5rem'}` }" role="presentation">
+		<svg
+			viewBox="0 0 24 24"
+			:style="{ height: `${size ?? '1.5em'}`, verticalAlign: 'middle' }"
+			role="presentation"
+		>
 			<path :d="path" fill="currentColor"></path>
 		</svg>
 	</div>
