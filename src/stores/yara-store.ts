@@ -63,6 +63,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 
 	const setView = async (index: number | null) => {
 		const view = viewListRef.value[index ?? -1] ?? null
+		selectedObject3DRef.value = null
 		viewRef.value = view
 		hiddenObjectListRef.value = view ? [...view.components.hidden] : []
 	}

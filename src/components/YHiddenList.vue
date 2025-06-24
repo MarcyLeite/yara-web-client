@@ -3,12 +3,13 @@
 		<div class="d-flex flex-column ga-2">
 			<span class="text-subtitle-1">Hidden Components</span>
 		</div>
-		<div class="d-flex flex-column" v-if="hiddenObjectList.length > 0">
+		<div class="d-flex flex-column text-subtitle-2" v-if="hiddenObjectList.length > 0">
 			<div v-for="(objectName, i) in hiddenObjectList" :key="i">
 				<y-divider />
 				<div class="py-2 d-flex align-center justify-space-between ga-2">
 					<div>{{ objectName }}</div>
 					<y-btn
+						type="flat"
 						@click="
 							() => {
 								const index = hiddenObjectList.findIndex((n) => n === objectName)
@@ -16,7 +17,7 @@
 							}
 						"
 					>
-						<div class="text-subtitle-2 text-light-alpha-70">show</div>
+						<div class="">show</div>
 					</y-btn>
 				</div>
 			</div>
