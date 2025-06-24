@@ -1,29 +1,31 @@
 <template>
-	<y-pannel>
-		<div class="pa-2 text-subtitle-2">
-			<div class="d-flex align-center ga-2" v-for="(objectName, i) in objectList" :key="i">
-				<y-btn
-					:icon="hiddenObjectList.includes(objectName) ? mdiEyeClosed : mdiEye"
-					@click="
-						() => {
-							const index = hiddenObjectList.findIndex((n) => n === objectName)
-							if (index === -1) {
-								hiddenObjectList.push(objectName)
-							} else {
+	<div class="px-3 d-flex flex-column ga-4">
+		<div class="d-flex flex-column ga-2">
+			<span class="text-subtitle-1">Hidden Components</span>
+		</div>
+		<div class="d-flex flex-column" v-if="hiddenObjectList.length > 0">
+			<div v-for="(objectName, i) in hiddenObjectList" :key="i">
+				<y-divider />
+				<div class="py-2 d-flex align-center justify-space-between ga-2">
+					<div>{{ objectName }}</div>
+					<y-btn
+						@click="
+							() => {
+								const index = hiddenObjectList.findIndex((n) => n === objectName)
 								hiddenObjectList.splice(index, 1)
 							}
-						}
-					"
-				></y-btn>
-				<div>{{ objectName }}</div>
+						"
+					>
+						<div class="text-subtitle-2 text-light-alpha-70">show</div>
+					</y-btn>
+				</div>
 			</div>
 		</div>
-	</y-pannel>
+	</div>
 </template>
 
 <script setup lang="ts">
 import type { YaraStore } from '@/stores/yara-store'
-import { mdiEye, mdiEyeClosed } from '@mdi/js'
 import { storeToRefs } from 'pinia'
 
 type Props = {
@@ -31,16 +33,5 @@ type Props = {
 }
 
 const { store } = defineProps<Props>()
-const { yara3d, hiddenObjectList } = storeToRefs(store)
-
-const objectList = ref<string[]>([])
-
-watch([yara3d], () => {
-	if (!yara3d.value) {
-		objectList.value = []
-		return
-	}
-
-	objectList.value = yara3d.value.objectIdList
-})
+const { hiddenObjectList } = storeToRefs(store)
 </script>

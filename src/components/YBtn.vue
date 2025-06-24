@@ -1,5 +1,5 @@
 <template>
-	<div v-if="icon">
+	<div>
 		<button
 			:class="[
 				className,
@@ -9,7 +9,8 @@
 			]"
 			@click="(e) => emit('click', e)"
 		>
-			<y-icon :path="icon" />
+			<y-icon v-if="icon" :path="icon" />
+			<slot></slot>
 		</button>
 	</div>
 </template>
