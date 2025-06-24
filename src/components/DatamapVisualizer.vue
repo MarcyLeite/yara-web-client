@@ -1,8 +1,8 @@
 <template>
 	<y-pannel>
-		<div class="pa-2" style="min-width: 240px">
+		<div class="pa-2" style="width: 12rem">
 			<div class="d-flex flex-column ga-3">
-				<div class="text-bold" style="text-overflow: ellipsis">
+				<div class="text-bold text-truncate">
 					{{ selectedObject3D?.name ?? 'No Seletion' }}
 				</div>
 
@@ -31,7 +31,7 @@
 								:style="{
 									borderTop: 0,
 									borderLeft: 0,
-									borderBottom: columnList.length === i ? 0 : undefined,
+									borderBottom: columnList[0].length - 1 === i ? 0 : undefined,
 								}"
 								v-for="(key, i) in columnList[0]"
 								class="d-flex justify-center border-light-alpha-40 px-2"
@@ -46,7 +46,7 @@
 									borderTop: 0,
 									borderLeft: 0,
 									borderRight: 0,
-									borderBottom: columnList.length === i ? 0 : undefined,
+									borderBottom: columnList[1].length - 1 === i ? 0 : undefined,
 								}"
 								v-for="(value, i) in columnList[1]"
 								class="d-flex justify-center border-light-alpha-40 px-2"
