@@ -1,6 +1,6 @@
 <template>
 	<y-pannel>
-		<div class="pa-2 d-flex flex-column ga-4 p-relative">
+		<div class="pa-2 d-flex flex-column ga-4 p-relative" style="max-width: 18rem">
 			<div style="position: relative; z-index: 100">
 				<view-selector :store="store" />
 			</div>
