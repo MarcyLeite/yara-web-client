@@ -19,6 +19,7 @@ export const addInteraction = (
 	let isDragging = false
 	let timout: number | null = null
 	let selectedObject: THREE.Object3D | null = null
+	let intersectionIndex = 0
 
 	const getIntesection = (event: MouseEvent) => {
 		const x = (event.clientX / rootElement.clientWidth) * 2 - 1
@@ -26,12 +27,17 @@ export const addInteraction = (
 		const mouse = new THREE.Vector2(x, y)
 
 		raycaster.setFromCamera(mouse, camera)
-		const intersectList = raycaster.intersectObject(scene, true)
-		for (const intersect of intersectList) {
-			if (intersect.object && intersect.object.visible) return intersect.object
+		const intersectList = raycaster
+			.intersectObject(scene, true)
+			.map((intersection) => intersection.object)
+
+		if (intersectList.length === 0) {
+			intersectionIndex = 0
+			return null
 		}
 
-		return null
+		const intersect = intersectList[intersectionIndex]
+		return intersect
 	}
 
 	const onClick = (event: MouseEvent) => {
@@ -41,24 +47,33 @@ export const addInteraction = (
 		if (isDragging) return
 		if (timout) clearTimeout(timout)
 
-		const selectedObject = getIntesection(event)
+		selectedObject = getIntesection(event)
+
+		intersectionIndex++
+
+		let nextObject = getIntesection(event)
+		if (!nextObject) {
+			intersectionIndex = 0
+			nextObject = getIntesection(event)
+		}
 
 		selectedPass.selectedObjects = selectedObject ? [selectedObject] : []
-		hoverPass.selectedObjects = []
+		hoverPass.selectedObjects = nextObject ? [nextObject] : []
 
 		onSelectCallback?.call({}, selectedObject)
 	}
 
 	const onHover = (event: MouseEvent) => {
 		if (isDragging) return
+		intersectionIndex = 0
 
-		const selectedObject = getIntesection(event)
-		if (!selectedObject) {
+		const hoverObject = getIntesection(event)
+		if (!hoverObject || hoverObject === selectedObject) {
 			hoverPass.selectedObjects = []
 			return
 		}
 
-		hoverPass.selectedObjects = [selectedObject]
+		hoverPass.selectedObjects = [hoverObject]
 	}
 
 	const onMouseDown = () => {
