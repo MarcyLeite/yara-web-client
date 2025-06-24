@@ -1,7 +1,7 @@
 <template>
-	<div class="d-flex ga-4 align-center text-button">
+	<div class="d-flex ga-4 align-center text-button text-bold">
 		VIEW
-		<y-select width="10rem" :options="options" :default="-1" @select="onSelect" />
+		<y-select width="100%" :options="options" :default="-1" @select="onSelect" />
 	</div>
 </template>
 
