@@ -1,28 +1,58 @@
 <template>
 	<y-pannel>
-		<div class="pa-2">
-			<div v-if="dataMap === null || !selectedObject3D">No Content</div>
-			<div v-else>
-				<div>{{ selectedObject3D.name }}</div>
-				<div class="d-flex" v-if="columnList[0].length > 1">
-					<div>
-						<div
-							:key="i"
-							:style="i > 0 ? { borderTop: 0 } : {}"
-							v-for="(key, i) in columnList[0]"
-							class="d-flex justify-center border-light-alpha-40 px-2"
+		<div class="pa-2" style="min-width: 240px">
+			<div class="d-flex flex-column ga-3">
+				<div class="text-bold" style="text-overflow: ellipsis">
+					{{ selectedObject3D?.name ?? 'No Seletion' }}
+				</div>
+
+				<div v-if="selectedObject3D" class="d-flex flex-column ga-2">
+					<y-divider />
+					<div class="d-flex justify-end py-2 text-subtitle-2">
+						<y-btn
+							type="flat"
+							@click="
+								() => {
+									hiddenObjectList.push(selectedObject3D!.name)
+									store.setSelectedObject3D(null)
+								}
+							"
 						>
-							{{ key }}
-						</div>
+							hide
+						</y-btn>
 					</div>
-					<div>
-						<div
-							:key="i"
-							:style="i > 0 ? { borderLeft: 0, borderTop: 0 } : { borderLeft: 0 }"
-							v-for="(value, i) in columnList[1]"
-							class="d-flex justify-center border-light-alpha-40 px-2"
-						>
-							{{ value }}
+					<div
+						class="d-flex align-strech border-light-alpha-40 rounded-lg"
+						v-if="columnList[0].length > 1"
+					>
+						<div class="d-flex flex-column grow-1">
+							<div
+								:key="i"
+								:style="{
+									borderTop: 0,
+									borderLeft: 0,
+									borderBottom: columnList.length === i ? 0 : undefined,
+								}"
+								v-for="(key, i) in columnList[0]"
+								class="d-flex justify-center border-light-alpha-40 px-2"
+							>
+								{{ key }}
+							</div>
+						</div>
+						<div class="d-flex flex-column grow-1">
+							<div
+								:key="i"
+								:style="{
+									borderTop: 0,
+									borderLeft: 0,
+									borderRight: 0,
+									borderBottom: columnList.length === i ? 0 : undefined,
+								}"
+								v-for="(value, i) in columnList[1]"
+								class="d-flex justify-center border-light-alpha-40 px-2"
+							>
+								{{ value }}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -40,7 +70,7 @@ type Props = {
 }
 
 const { store } = defineProps<Props>()
-const { dataMap, selectedObject3D, view } = storeToRefs(store)
+const { dataMap, selectedObject3D, view, hiddenObjectList } = storeToRefs(store)
 
 const columnList = ref<[string[], unknown[]]>([[], []])
 
