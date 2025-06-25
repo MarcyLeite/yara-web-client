@@ -25,6 +25,11 @@
 					"indexerList": ["B", "A"]
 				},
 				{
+					"id": "Body1",
+					"indexerList": ["C", "A"],
+					"compute": "1 + 100 + 500 + 900"
+				},
+				{
 					"id": "Nose",
 					"isHidden": true
 				}

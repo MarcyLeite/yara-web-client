@@ -4,7 +4,7 @@ import { createConnection, type Connection } from '@/modules/connection/connecti
 import { createConsumerUpdater, type ConsumerUpdater } from '@/modules/consumer-updater'
 import { createPainter, type Painter } from '@/modules/painter'
 import { type Yara3D } from '@/modules/scene3D/yara-3d'
-import { createView, type View } from '@/modules/view'
+import { createView, type ComponentColorMap, type View } from '@/modules/view'
 import type { Optional } from '@/utils/types'
 import { defineStore } from 'pinia'
 import type { Object3D } from 'three'
@@ -24,6 +24,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 	const moment = ref(initialDate)
 	const viewRef = ref<Optional<View>>(null)
 	const dataMapRef = ref<DataMap>({})
+	const colorMapRef = ref<ComponentColorMap>({})
 	const selectedObject3DRef = ref<Object3D | null>(null)
 	const hiddenObjectListRef = ref<string[]>([])
 
@@ -54,6 +55,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 
 		if (newMoment > prev) painter.update()
 		else painter.refresh()
+		colorMapRef.value = painter.colorMap
 	}
 
 	const setYara3D = (yara3D?: Yara3D) => {
@@ -116,6 +118,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 		moment,
 		modelPath: modelPathRef,
 		dataMap: dataMapRef,
+		colorMap: colorMapRef,
 		view: viewRef,
 		viewList: viewListRef,
 		selectedObject3D: selectedObject3DRef,

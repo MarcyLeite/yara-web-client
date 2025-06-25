@@ -60,7 +60,13 @@ export type ViewConfig = {
 /**
  * Object reference that stores Object3D id and color string
  */
-export type ComponentColorMap = Record<string, HexColor | undefined>
+export type ComponentColorMap = Record<
+	string,
+	{
+		value: GenericType
+		color: HexColor | undefined
+	}
+>
 
 /**
  * Stores data of current selected view to be used in page
@@ -86,6 +92,7 @@ export type View = {
 		 */
 		hidden: string[]
 
+		getComputedFormula: (componentId: string) => string | null
 		/**
 		 * Extracts only related data from configured object3D
 		 * @param componentId object3D component id
@@ -138,6 +145,13 @@ export const createView = (config: ViewConfig): View => {
 		return exclusiveDataMap
 	}
 
+	const getComputedFormula = (componentId: string) => {
+		const componentConfig = config.components.find((component) => component.id === componentId)
+		if (!componentConfig) return null
+
+		return componentConfig.compute ?? null
+	}
+
 	const getColorMap = (inputDataSet: DataMap) => {
 		const colorMap: ComponentColorMap = {}
 
@@ -146,14 +160,14 @@ export const createView = (config: ViewConfig): View => {
 			let value: GenericType
 
 			if (componentConfig.compute) {
-				value = yaraParse(componentConfig.compute, inputDataSet)
+				value = yaraParse(componentConfig.compute, inputDataSet, 'eng')
 			} else {
 				const measuarent = componentConfig.indexerList[0]
 				if (inputDataSet[measuarent] === undefined) continue
 				value = inputDataSet[measuarent]?.eng
 			}
 
-			colorMap[componentConfig.id] = mapper.getColor(value ?? null)
+			colorMap[componentConfig.id] = { value, color: mapper.getColor(value ?? null) }
 		}
 
 		return colorMap
@@ -166,6 +180,7 @@ export const createView = (config: ViewConfig): View => {
 			idList,
 			hidden: hiddenComponentList,
 			extactFromDataMap,
+			getComputedFormula,
 			getColorMap,
 		},
 		dataIndexerList,

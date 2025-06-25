@@ -21,37 +21,63 @@
 							hide
 						</y-btn>
 					</div>
-					<div
-						class="d-flex align-strech border-light-alpha-40 rounded-lg"
-						v-if="columnList[0].length > 1"
-					>
-						<div class="d-flex flex-column grow-1">
+					<div class="px-2 d-flex flex-column ga-2">
+						<div class="d-flex justify-space-between">
+							<div class="text-bold">Value</div>
 							<div
-								:key="i"
-								:style="{
-									borderTop: 0,
-									borderLeft: 0,
-									borderBottom: columnList[0].length - 1 === i ? 0 : undefined,
-								}"
-								v-for="(key, i) in columnList[0]"
-								class="d-flex justify-center border-light-alpha-40 px-2"
+								v-if="
+									store.colorMap[selectedObject3D.name] &&
+									typeof store.colorMap[selectedObject3D.name].value === 'number'
+								"
 							>
-								{{ key }}
+								{{ (store.colorMap[selectedObject3D.name].value as number).toFixed(2) }}
+							</div>
+							<div v-else-if="store.colorMap[selectedObject3D.name]">
+								{{ store.colorMap[selectedObject3D.name].value }}
 							</div>
 						</div>
-						<div class="d-flex flex-column grow-1">
+
+						<div
+							class="d-flex align-strech border-light-alpha-40 rounded-lg"
+							v-if="columnList[0].length > 1"
+						>
+							<div class="d-flex flex-column grow-1">
+								<div
+									:key="i"
+									:style="{
+										borderTop: 0,
+										borderLeft: 0,
+										borderBottom: columnList[0].length - 1 === i ? 0 : undefined,
+									}"
+									v-for="(key, i) in columnList[0]"
+									class="d-flex justify-center border-light-alpha-40 px-2"
+								>
+									{{ key }}
+								</div>
+							</div>
+							<div class="d-flex flex-column grow-1">
+								<div
+									:key="i"
+									:style="{
+										borderTop: 0,
+										borderLeft: 0,
+										borderRight: 0,
+										borderBottom: columnList[1].length - 1 === i ? 0 : undefined,
+									}"
+									v-for="(value, i) in columnList[1]"
+									class="d-flex justify-center border-light-alpha-40 px-2"
+								>
+									{{ value }}
+								</div>
+							</div>
+						</div>
+						<div class="d-flex flex-column justify-space-between ga-2">
+							<div class="text-bold">Formula</div>
 							<div
-								:key="i"
-								:style="{
-									borderTop: 0,
-									borderLeft: 0,
-									borderRight: 0,
-									borderBottom: columnList[1].length - 1 === i ? 0 : undefined,
-								}"
-								v-for="(value, i) in columnList[1]"
-								class="d-flex justify-center border-light-alpha-40 px-2"
+								class="grow-1 bg-panel px-2 rounded-lg outline-light-alpha-40"
+								style="text-wrap: wrap; overflow: visible"
 							>
-								{{ value }}
+								{{ view?.components.getComputedFormula(selectedObject3D.name) ?? '-' }}
 							</div>
 						</div>
 					</div>
