@@ -94,7 +94,8 @@ export const createYara3D = async (
 
 	const paint = (componentColorMap?: ComponentColorMap) => {
 		if (!componentColorMap) return
-		for (const [name, color] of Object.entries(componentColorMap)) {
+		for (const [name, colorObject] of Object.entries(componentColorMap)) {
+			const color = colorObject.color
 			const object3d = scene.getObjectByName(name) as THREE.Mesh
 			if (!object3d || !color) continue
 			const material = (object3d.material as THREE.MeshStandardMaterial).clone()

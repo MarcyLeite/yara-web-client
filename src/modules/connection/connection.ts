@@ -6,7 +6,7 @@ export type ConnectionConfigType = {
 }
 
 export type ConnectionConfig = ConnectionInfluxDBConfig | ConnectionDemoConfig
-export type GenericType = string | number | boolean
+export type GenericType = string | number | boolean | null
 
 /**
  * Unknown object returned by database.
