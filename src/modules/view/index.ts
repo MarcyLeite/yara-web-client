@@ -1,4 +1,6 @@
+import type { GenericType } from '../connection/connection'
 import type { DataMap } from '../consumer/buffer'
+import { yaraParse } from '../eval'
 import type { Yara3DOptions } from '../scene3D/yara-3d'
 import {
 	createColorMapper,
@@ -27,6 +29,11 @@ type ViewComponentConfig = {
 	 * @property list of indexers that will be used to calculate color
 	 */
 	indexerList?: string[]
+
+	/**
+	 * @property string JS code to compute value
+	 */
+	compute?: string
 }
 
 /**
@@ -133,14 +140,20 @@ export const createView = (config: ViewConfig): View => {
 
 	const getColorMap = (inputDataSet: DataMap) => {
 		const colorMap: ComponentColorMap = {}
+
 		for (const componentConfig of config.components) {
 			if (componentConfig.isHidden || !componentConfig.indexerList) continue
+			let value: GenericType
 
-			const measuarent = componentConfig.indexerList[0]
+			if (componentConfig.compute) {
+				value = yaraParse(componentConfig.compute, inputDataSet)
+			} else {
+				const measuarent = componentConfig.indexerList[0]
+				if (inputDataSet[measuarent] === undefined) continue
+				value = inputDataSet[measuarent]?.eng
+			}
 
-			if (inputDataSet[measuarent] === undefined) continue
-
-			colorMap[componentConfig.id] = mapper.getColor(inputDataSet[measuarent]?.eng ?? null)
+			colorMap[componentConfig.id] = mapper.getColor(value ?? null)
 		}
 
 		return colorMap
