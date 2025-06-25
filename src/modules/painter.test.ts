@@ -77,9 +77,9 @@ describe('[Service] Integration painter', () => {
 		colorMap.should.haveOwnProperty('0')
 		colorMap.should.haveOwnProperty('1')
 
-		if (!colorMap['0'] || !colorMap['1']) return
+		if (!colorMap['0'].color || !colorMap['1'].color) return
 
-		colorMap['0'].should.eql('#000000')
-		colorMap['1'].should.not.eql('#000000')
+		colorMap['0'].color.should.eql('#000000')
+		colorMap['1'].color.should.not.eql('#000000')
 	})
 })

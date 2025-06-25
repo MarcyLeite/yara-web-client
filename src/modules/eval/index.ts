@@ -2,7 +2,8 @@ import type { GenericType } from '../connection/connection'
 import type { DataMap } from '../consumer/buffer'
 import * as acorn from 'acorn'
 
-const identifierSolver = (value: DataMap | GenericType, property: string) => {
+const identifierSolver = (value: DataMap | GenericType | undefined, property: string) => {
+	if (value === undefined || value === null) return null
 	if (typeof value === 'object') return (value as DataMap)[property]
 	return value
 }
@@ -60,7 +61,8 @@ const resolveLiteral = (literal: acorn.Literal) => {
 }
 
 const resolveIdentifier = (expression: acorn.Identifier, { context }: ContextOptions) => {
-	return context[expression.name]
+	if (!context) return null
+	return context[expression.name] ?? null
 }
 
 const resolveMemberExpression = (
