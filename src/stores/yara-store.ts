@@ -99,6 +99,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 
 		consumerUpdaterRef.value = consumerUpdater
 		dataMapRef.value = consumerUpdater.fixedDataMap ?? {}
+		colorMapRef.value = painter.colorMap
 		painterRef.value = painter
 	})
 
