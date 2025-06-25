@@ -8,16 +8,20 @@ const createTransparentMaterial = (color: string | number) => {
 		roughness: 0.75,
 		opacity: 0.4,
 		depthWrite: false,
+		depthTest: false,
 	})
 }
 export const ghostifyModel = (group: THREE.Group) => {
+	let i = 0
 	for (const object3D of group.children) {
-		updateOjbect3D(object3D as THREE.Mesh)
+		updateOjbect3D(object3D as THREE.Mesh, i)
+		i++
 	}
 }
 
-const updateOjbect3D = (object3D: THREE.Mesh) => {
+const updateOjbect3D = (object3D: THREE.Mesh, i: number) => {
 	object3D.material = createTransparentMaterial(0xffffff)
+	object3D.renderOrder = i
 }
 
 export const doRecursily = (object3D: THREE.Object3D, callback: (mesh: THREE.Mesh) => void) => {
