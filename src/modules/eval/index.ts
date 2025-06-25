@@ -22,11 +22,17 @@ const resolveExpression = (expression: acorn.Expression, options: ContextOptions
 	if (expression.type === 'BinaryExpression') {
 		return resolveBinaryExpression(expression, options)
 	}
+	if (expression.type === 'LogicalExpression') {
+		return resolveLogicalExpression(expression, options)
+	}
 	if (expression.type === 'Identifier') {
 		return resolveIdentifier(expression, options)
 	}
 	if (expression.type === 'MemberExpression') {
 		return resolveMemberExpression(expression, options)
+	}
+	if (expression.type === 'ConditionalExpression') {
+		return resolveConditionalExpression(expression, options)
 	}
 }
 
@@ -54,8 +60,30 @@ const resolveBinaryExpression = (
 	if (operator === '-') return leftValue - rightValue
 	if (operator === '*') return leftValue * rightValue
 	if (operator === '/') return leftValue / rightValue
+	if (operator === '%') return leftValue % rightValue
+
+	if (operator === '===') return leftValue === rightValue
+	if (operator === '==') return leftValue == rightValue
+	if (operator === '!==') return leftValue !== rightValue
+	if (operator === '!=') return leftValue != rightValue
 }
 
+const resolveLogicalExpression = (
+	{ left, right, operator }: acorn.LogicalExpression,
+	options: ContextOptions
+) => {
+	const leftValue = identifierSolver(
+		resolveExpression(left as acorn.Expression, options) as DataMap,
+		options.property
+	) as number
+	const rightValue = identifierSolver(
+		resolveExpression(right as acorn.Expression, options) as DataMap,
+		options.property
+	) as number
+
+	if (operator === '&&') return leftValue && rightValue
+	if (operator === '||') return leftValue || rightValue
+}
 const resolveLiteral = (literal: acorn.Literal) => {
 	return literal.value
 }
@@ -77,6 +105,16 @@ const resolveMemberExpression = (
 	return value
 }
 
+const resolveConditionalExpression = (
+	expression: acorn.ConditionalExpression,
+	options: ContextOptions
+): unknown => {
+	const test = resolveExpression(expression.test, options)
+	const consequent = resolveExpression(expression.consequent, options)
+	const alternate = resolveExpression(expression.alternate, options)
+	return test ? consequent : alternate
+}
+
 type ContextOptions = {
 	context: DataMap
 	property: string
@@ -88,8 +126,6 @@ export const yaraParse = (
 	defaultProperty = ''
 ): GenericType => {
 	const program = acorn.parse(code, { ecmaVersion: 2020 })
-
-	//console.log(program.body[0])
 
 	return (
 		(resolveStatement(program.body[0] as acorn.Statement, {

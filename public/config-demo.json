@@ -77,6 +77,33 @@
 					"indexerList": ["cold3"]
 				}
 			]
+		},
+		{
+			"display": "Key Color",
+			"mapper": {
+				"type": "key-color",
+				"map": {
+					"hot": "#ff0000",
+					"cold": "#0000ff",
+					"ON": "#00ff00",
+					"OFF": "#000000"
+				}
+			},
+			"components": [
+				{
+					"id": "Body3",
+					"compute": "'hot'"
+				},
+				{
+					"id": "Body2",
+					"compute": "'cold'"
+				},
+				{
+					"id": "Body1",
+          "indexerList": ["walk"],
+					"compute": "walk % 2 === 0 ? 'ON' : 'OFF'"
+				}
+			]
 		}
 	]
 }
