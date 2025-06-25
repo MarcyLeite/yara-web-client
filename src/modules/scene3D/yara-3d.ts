@@ -50,6 +50,7 @@ export const createYara3D = async (
 	})
 
 	const renderer = createRenderer({ boxSize })
+
 	const orbitControls = createOrbitControls(camera, { element: rootElement })
 	const { composer, effects } = createEffects({ renderer, scene, camera, boxSize })
 
