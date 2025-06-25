@@ -84,6 +84,8 @@ export const useYaraStore = defineStore('yara-store', () => {
 		yara3D?.reset()
 
 		painterRef.value = null
+		dataMapRef.value = {}
+		colorMapRef.value = {}
 		consumerUpdaterRef.value = null
 
 		if (!view || !connection || !yara3D) return
