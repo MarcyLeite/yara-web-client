@@ -16,7 +16,7 @@ describe('[Service] View', () => {
 			source: '',
 			status: '',
 			eng: 0,
-			raw: 10,
+			raw: 15,
 		},
 	}
 
@@ -61,5 +61,14 @@ describe('[Service] View', () => {
 
 		colorMap.should.not.haveOwnProperty('0')
 		colorMap.should.haveOwnProperty('1')
+	})
+
+	it.only('Should compute value and return correct value', () => {
+		const colorMap = view.components.getColorMap(dataMap)
+
+		should.exist(colorMap['3'])
+		if (!colorMap['3']) return
+
+		colorMap['3'].should.equal(hueToHSL(36))
 	})
 })

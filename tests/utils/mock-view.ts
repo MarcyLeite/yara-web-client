@@ -23,6 +23,12 @@ export const mockViewConfig: ViewConfig = {
 			display: 'Panel #3',
 			isHidden: true,
 		},
+		{
+			id: '3',
+			display: 'Panel #4',
+			indexerList: ['foo', 'bar'],
+			compute: 'foo.eng - bar.raw',
+		},
 	],
 }
 
