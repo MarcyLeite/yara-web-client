@@ -26,14 +26,14 @@ describe('[Service] View', () => {
 
 	it('Should generate component data', () => {
 		const colorMap = view.components.getColorMap(dataMap)
-		Object.keys(colorMap).should.have.length(2)
+		Object.keys(colorMap).should.have.length(3)
 		colorMap.should.haveOwnProperty('0')
 		colorMap.should.haveOwnProperty('1')
 
-		if (!colorMap['0'] || !colorMap['1']) return
+		if (!colorMap['0'].color || !colorMap['1'].color) return
 
-		colorMap['0'].should.equal(hueToHSL(0))
-		colorMap['1'].should.equal(hueToHSL(240))
+		colorMap['0'].color.should.equal(hueToHSL(0))
+		colorMap['1'].color.should.equal(hueToHSL(240))
 	})
 	it('Should not have color for components with "isHidden: true"', () => {
 		const hiddenComponentList = view.components.hidden
@@ -63,12 +63,12 @@ describe('[Service] View', () => {
 		colorMap.should.haveOwnProperty('1')
 	})
 
-	it.only('Should compute value and return correct value', () => {
+	it('Should compute value and return correct value', () => {
 		const colorMap = view.components.getColorMap(dataMap)
 
 		should.exist(colorMap['3'])
-		if (!colorMap['3']) return
+		if (!colorMap['3'].color) return
 
-		colorMap['3'].should.equal(hueToHSL(36))
+		colorMap['3'].color.should.equal(hueToHSL(36))
 	})
 })

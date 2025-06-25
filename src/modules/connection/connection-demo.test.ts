@@ -49,16 +49,16 @@ describe('[Connection] Connection Demo', async () => {
 			snapshot.timestamp.should.equal(createDateFromShift(1).getTime())
 		}
 
-		snapshotList[0].data._measurement.should.equal('hot1')
-		snapshotList[0].data.eng.should.equal(51)
-		snapshotList[1].data._measurement.should.equal('hot2')
-		snapshotList[1].data.eng.should.equal(48)
-		snapshotList[2].data._measurement.should.equal('cold1')
-		snapshotList[2].data.eng.should.equal(50)
-		snapshotList[3].data._measurement.should.equal('cold2')
-		snapshotList[3].data.eng.should.equal(49)
-		snapshotList[4].data._measurement.should.equal('walk')
-		snapshotList[4].data.eng.should.equal(50)
+		snapshotList[0].data._measurement!.should.equal('hot1')
+		snapshotList[0].data.eng!.should.equal(51)
+		snapshotList[1].data._measurement!.should.equal('hot2')
+		snapshotList[1].data.eng!.should.equal(48)
+		snapshotList[2].data._measurement!.should.equal('cold1')
+		snapshotList[2].data.eng!.should.equal(50)
+		snapshotList[3].data._measurement!.should.equal('cold2')
+		snapshotList[3].data.eng!.should.equal(49)
+		snapshotList[4].data._measurement!.should.equal('walk')
+		snapshotList[4].data.eng!.should.equal(50)
 	}
 
 	const checkDifference = (snapshotList: Snapshot[]) => {
@@ -69,38 +69,38 @@ describe('[Connection] Connection Demo', async () => {
 			snapshot.timestamp.should.equal(createDateFromShift(60 + shift).getTime())
 		}
 
-		snapshotList[0].data._measurement.should.equal('hot1')
-		snapshotList[0].data.eng.should.equal(66)
-		snapshotList[1].data._measurement.should.equal('hot2')
-		snapshotList[1].data.eng.should.equal(49)
-		snapshotList[2].data._measurement.should.equal('cold1')
-		snapshotList[2].data.eng.should.equal(35)
-		snapshotList[3].data._measurement.should.equal('cold2')
-		snapshotList[3].data.eng.should.equal(49)
-		snapshotList[4].data._measurement.should.equal('walk')
-		snapshotList[4].data.eng.should.equal(44)
+		snapshotList[0].data._measurement!.should.equal('hot1')
+		snapshotList[0].data.eng!.should.equal(66)
+		snapshotList[1].data._measurement!.should.equal('hot2')
+		snapshotList[1].data.eng!.should.equal(49)
+		snapshotList[2].data._measurement!.should.equal('cold1')
+		snapshotList[2].data.eng!.should.equal(35)
+		snapshotList[3].data._measurement!.should.equal('cold2')
+		snapshotList[3].data.eng!.should.equal(49)
+		snapshotList[4].data._measurement!.should.equal('walk')
+		snapshotList[4].data.eng!.should.equal(44)
 
-		snapshotList[5].data._measurement.should.equal('hot1')
-		snapshotList[5].data.eng.should.equal(66)
-		snapshotList[6].data._measurement.should.equal('hot2')
-		snapshotList[6].data.eng.should.equal(50)
-		snapshotList[7].data._measurement.should.equal('cold1')
-		snapshotList[7].data.eng.should.equal(35)
-		snapshotList[8].data._measurement.should.equal('cold2')
-		snapshotList[8].data.eng.should.equal(49)
-		snapshotList[9].data._measurement.should.equal('walk')
-		snapshotList[9].data.eng.should.equal(43)
+		snapshotList[5].data._measurement!.should.equal('hot1')
+		snapshotList[5].data.eng!.should.equal(66)
+		snapshotList[6].data._measurement!.should.equal('hot2')
+		snapshotList[6].data.eng!.should.equal(50)
+		snapshotList[7].data._measurement!.should.equal('cold1')
+		snapshotList[7].data.eng!.should.equal(35)
+		snapshotList[8].data._measurement!.should.equal('cold2')
+		snapshotList[8].data.eng!.should.equal(49)
+		snapshotList[9].data._measurement!.should.equal('walk')
+		snapshotList[9].data.eng!.should.equal(43)
 
-		snapshotList[10].data._measurement.should.equal('hot1')
-		snapshotList[10].data.eng.should.equal(66)
-		snapshotList[11].data._measurement.should.equal('hot2')
-		snapshotList[11].data.eng.should.equal(50)
-		snapshotList[12].data._measurement.should.equal('cold1')
-		snapshotList[12].data.eng.should.equal(35)
-		snapshotList[13].data._measurement.should.equal('cold2')
-		snapshotList[13].data.eng.should.equal(50)
-		snapshotList[14].data._measurement.should.equal('walk')
-		snapshotList[14].data.eng.should.equal(43)
+		snapshotList[10].data._measurement!.should.equal('hot1')
+		snapshotList[10].data.eng!.should.equal(66)
+		snapshotList[11].data._measurement!.should.equal('hot2')
+		snapshotList[11].data.eng!.should.equal(50)
+		snapshotList[12].data._measurement!.should.equal('cold1')
+		snapshotList[12].data.eng!.should.equal(35)
+		snapshotList[13].data._measurement!.should.equal('cold2')
+		snapshotList[13].data.eng!.should.equal(50)
+		snapshotList[14].data._measurement!.should.equal('walk')
+		snapshotList[14].data.eng!.should.equal(43)
 	}
 
 	it('Should get last data', async () => {
@@ -111,7 +111,7 @@ describe('[Connection] Connection Demo', async () => {
 	it('Should not go over when max property is set', async () => {
 		const snapshotList = await connection.getLastDataFrom(createDateFromShift(100), indexerList)
 		const hotSnapshot = snapshotList[1]
-		hotSnapshot.data.eng.should.not.be.greaterThan(50)
+		hotSnapshot.data.eng!.should.not.be.greaterThan(50)
 	})
 
 	it('Should come back to value when max property is hitted and set', async () => {
@@ -119,13 +119,13 @@ describe('[Connection] Connection Demo', async () => {
 		const snapshotList = await connection.getLastDataFrom(createDateFromShift(3), indexerList)
 
 		const hotSnapshot = snapshotList[1]
-		hotSnapshot.data.eng.should.equal(48)
+		hotSnapshot.data.eng!.should.equal(48)
 	})
 
 	it('Should not go under when min property is set', async () => {
 		const snapshotList = await connection.getLastDataFrom(createDateFromShift(100), indexerList)
 		const coldSnapshot = snapshotList[3]
-		coldSnapshot.data.eng.should.not.be.lessThan(49)
+		coldSnapshot.data.eng!.should.not.be.lessThan(49)
 	})
 
 	it('Should come back to value when min property is hitted and set', async () => {
@@ -133,7 +133,7 @@ describe('[Connection] Connection Demo', async () => {
 		const snapshotList = await connection.getLastDataFrom(createDateFromShift(22), indexerList)
 
 		const coldSnapshot = snapshotList[3]
-		coldSnapshot.data.eng.should.not.be.lessThan(51)
+		coldSnapshot.data.eng!.should.not.be.lessThan(51)
 	})
 
 	it('Should not change last data result after another two queries', async () => {
