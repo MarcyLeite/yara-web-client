@@ -90,11 +90,13 @@ from(bucket: "${bucket}")
 
 	return {
 		getLastDataFrom: async (date, indexerList) => {
+			if (indexerList.length === 0) return [{ timestamp: 0, data: {} }]
 			const queryString = getLastQuery(date, indexerList)
 			const result = await queryLast(queryString)
 			return result
 		},
 		getDataFromRange: async (date1, date2, indexerList) => {
+			if (indexerList.length === 0) return []
 			const result = await query(getDifferenceQuery(date1, date2, indexerList))
 			return result
 		},
