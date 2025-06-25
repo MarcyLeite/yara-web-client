@@ -156,12 +156,13 @@ export const createView = (config: ViewConfig): View => {
 		const colorMap: ComponentColorMap = {}
 
 		for (const componentConfig of config.components) {
-			if (componentConfig.isHidden || !componentConfig.indexerList) continue
+			if (componentConfig.isHidden) continue
 			let value: GenericType
 
 			if (componentConfig.compute) {
 				value = yaraParse(componentConfig.compute, inputDataSet, 'eng')
 			} else {
+				if (!componentConfig.indexerList) continue
 				const measuarent = componentConfig.indexerList[0]
 				if (inputDataSet[measuarent] === undefined) continue
 				value = inputDataSet[measuarent]?.eng

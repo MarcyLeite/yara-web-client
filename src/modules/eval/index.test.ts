@@ -39,4 +39,30 @@ describe('[Module] Evaluator', () => {
 		)
 		value!.should.equal(15)
 	})
+
+	it('Should eval chanining expression', () => {
+		const valueTrue = yaraParse('true ? "foo" : "bar"')
+		valueTrue!.should.equal('foo')
+		const valueFalse = yaraParse('false ? "foo" : "bar"')
+		valueFalse!.should.equal('bar')
+	})
+
+	it('Should eval logical expressions', () => {
+		let value = yaraParse('10 % 2 === 0')
+		value!.should.equal(true)
+		value = yaraParse("10 % 2 == '0'")
+		value!.should.equal(true)
+
+		value = yaraParse('10 % 2 !== 0')
+		value!.should.equal(false)
+
+		value = yaraParse("10 % 2 != \'1\'")
+		value!.should.equal(true)
+
+		value = yaraParse('true && false')
+		value!.should.equal(false)
+
+		value = yaraParse('true || false')
+		value!.should.equal(true)
+	})
 })
