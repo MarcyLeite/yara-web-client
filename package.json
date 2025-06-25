@@ -18,6 +18,7 @@
 	"dependencies": {
 		"@influxdata/influxdb-client": "^1.35.0",
 		"@mdi/js": "^7.4.47",
+		"acorn": "^8.15.0",
 		"axios": "^1.9.0",
 		"pinia": "^3.0.1",
 		"rand-seed": "^2.1.7",
