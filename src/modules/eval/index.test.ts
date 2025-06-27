@@ -65,4 +65,11 @@ describe('[Module] Evaluator', () => {
 		value = yaraParse('true || false')
 		value!.should.equal(true)
 	})
+
+	it('Should solve negative number', () => {
+		const context = { foo: { eng: -50, raw: 30 } }
+		const value = yaraParse("foo.eng < -60 ? 'ON' : 'OFF'", context, 'eng')
+
+		value!.should.equal('OFF')
+	})
 })
