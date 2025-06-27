@@ -34,6 +34,7 @@ const resolveExpression = (expression: acorn.Expression, options: ContextOptions
 	if (expression.type === 'ConditionalExpression') {
 		return resolveConditionalExpression(expression, options)
 	}
+	if (expression.type === 'UnaryExpression') return resolveUnaryExpression(expression, options)
 }
 
 const resolveExpressionStatement = (
@@ -41,6 +42,16 @@ const resolveExpressionStatement = (
 	options: ContextOptions
 ) => {
 	return resolveExpression(expression, options)
+}
+
+const resolveUnaryExpression = (
+	{ operator, argument }: acorn.UnaryExpression,
+	options: ContextOptions
+) => {
+	const value = resolveExpression(argument, options) as number
+	if (operator === '-') return -value
+	if (operator === '+') return +value
+	if (operator === '!') return !value
 }
 
 const resolveBinaryExpression = (
@@ -66,6 +77,11 @@ const resolveBinaryExpression = (
 	if (operator === '==') return leftValue == rightValue
 	if (operator === '!==') return leftValue !== rightValue
 	if (operator === '!=') return leftValue != rightValue
+
+	if (operator === '<') return leftValue < rightValue
+	if (operator === '<=') return leftValue <= rightValue
+	if (operator === '>') return leftValue > rightValue
+	if (operator === '>=') return leftValue >= rightValue
 }
 
 const resolveLogicalExpression = (
@@ -84,6 +100,7 @@ const resolveLogicalExpression = (
 	if (operator === '&&') return leftValue && rightValue
 	if (operator === '||') return leftValue || rightValue
 }
+
 const resolveLiteral = (literal: acorn.Literal) => {
 	return literal.value
 }
