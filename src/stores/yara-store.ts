@@ -76,6 +76,7 @@ export const useYaraStore = defineStore('yara-store', () => {
 
 		const shiftDate = new Date(moment.value.getTime() - BACKWARDS_SHIFT)
 		consumer.value = await createConsumer(strategy, shiftDate, BUFFER_SIZE)
+		consumer.value.start()
 
 		consumer.value.setMoment(moment.value)
 		buffer.value = consumer.value.getBuffer()
