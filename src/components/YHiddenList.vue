@@ -8,21 +8,13 @@
 			class="px-4 d-flex flex-column text-subtitle-2"
 			style="max-height: 20rem; overflow: scroll"
 		>
-			<div class="text-light-alpha-50" v-if="hiddenObjectList.length === 0">None</div>
-			<div v-else v-for="(objectName, i) in hiddenObjectList" :key="i">
+			<div class="text-light-alpha-50" v-if="yara3DState.hiddenList?.length === 0">None</div>
+			<div v-else v-for="(objectName, i) in yara3DState.hiddenList" :key="i">
 				<y-divider v-if="i > 0" />
 				<div class="py-2 d-flex align-center justify-space-between ga-2">
 					<div class="text-truncate">{{ objectName }}</div>
 
-					<y-btn
-						type="flat"
-						@click="
-							() => {
-								const index = hiddenObjectList.findIndex((n) => n === objectName)
-								hiddenObjectList.splice(index, 1)
-							}
-						"
-					>
+					<y-btn type="flat" @click="() => {}">
 						<div>show</div>
 					</y-btn>
 				</div>
@@ -40,5 +32,5 @@ type Props = {
 }
 
 const { store } = defineProps<Props>()
-const { hiddenObjectList } = storeToRefs(store)
+const { yara3DState } = storeToRefs(store)
 </script>

@@ -12,7 +12,7 @@ import {
 /**
  * Configuration objects for views
  */
-type ViewComponentConfig = {
+export type ViewComponentConfig = {
 	/**
 	 * @property name of Object3D
 	 */
@@ -57,16 +57,13 @@ export type ViewConfig = {
 	 */
 }
 
-/**
- * Object reference that stores Object3D id and color string
- */
-export type ComponentColorMap = Record<
-	string,
-	{
-		value: GenericType
-		color: HexColor | undefined
-	}
->
+export type ComponentState = {
+	dataMap: DataMap
+	value: GenericType | null
+	color: HexColor | null
+	isHidden: boolean
+}
+export type ComponentStateMap = Record<string, ComponentState>
 
 /**
  * Stores data of current selected view to be used in page
@@ -92,7 +89,7 @@ export type View = {
 		 */
 		hidden: string[]
 
-		getComputedFormula: (componentId: string) => string | null
+		getComponentConfigMap: () => Record<string, ViewComponentConfig>
 		/**
 		 * Extracts only related data from configured object3D
 		 * @param componentId object3D component id
@@ -106,13 +103,15 @@ export type View = {
 		 * @param dataMap Generic data. Usually setted by connection and current time
 		 * @returns list of component-color map
 		 */
-		getColorMap: (dataMap: DataMap) => ComponentColorMap
+		getComponentStateMap: (dataMap: DataMap) => ComponentStateMap
 	}
 	/**
 	 * @property list of indexers that will define connection queries
 	 */
 	dataIndexerList: string[]
 }
+
+const DEFAULT_PROPERTY = 'eng'
 
 export const createView = (config: ViewConfig): View => {
 	const dataIndexerList: string[] = []
@@ -145,33 +144,56 @@ export const createView = (config: ViewConfig): View => {
 		return exclusiveDataMap
 	}
 
-	const getComputedFormula = (componentId: string) => {
-		const componentConfig = config.components.find((component) => component.id === componentId)
-		if (!componentConfig) return null
-
-		return componentConfig.compute ?? null
+	const getComponentConfigMap = () => {
+		return config.components.reduce(
+			(map, componentConfig) => {
+				map[componentConfig.id] = componentConfig
+				return map
+			},
+			{} as Record<string, ViewComponentConfig>
+		)
 	}
 
-	const getColorMap = (inputDataSet: DataMap) => {
-		const colorMap: ComponentColorMap = {}
-
-		for (const componentConfig of config.components) {
-			if (componentConfig.isHidden) continue
-			let value: GenericType
-
-			if (componentConfig.compute) {
-				value = yaraParse(componentConfig.compute, inputDataSet, 'eng')
-			} else {
-				if (!componentConfig.indexerList) continue
-				const measuarent = componentConfig.indexerList[0]
-				if (inputDataSet[measuarent] === undefined) continue
-				value = inputDataSet[measuarent]?.eng
-			}
-
-			colorMap[componentConfig.id] = { value, color: mapper.getColor(value ?? null) }
+	const createComponentState = (config: ViewComponentConfig, dataMap: DataMap) => {
+		const state: ComponentState = {
+			dataMap:
+				config.indexerList?.reduce((map, index) => {
+					map[index] = dataMap[index]
+					return map
+				}, {} as DataMap) ?? {},
+			isHidden: false,
+			color: null,
+			value: null,
+		}
+		if (config.isHidden) {
+			state.isHidden = true
+			return
+		}
+		if (config.compute) {
+			state.value = yaraParse(config.compute, dataMap, DEFAULT_PROPERTY)
+		} else {
+			if (!config.indexerList || config.indexerList.length === 0) return
+			const indexer = config.indexerList[0]
+			const data = dataMap[indexer]
+			if (!data) return
+			state.value = data[DEFAULT_PROPERTY] ?? null
 		}
 
-		return colorMap
+		state.color = mapper.getColor(state.value)
+
+		return state
+	}
+
+	const getComponentStateMap = (dataMap: DataMap) => {
+		const stateMap: Record<string, ComponentState> = {}
+
+		for (const componentConfig of config.components) {
+			const state = createComponentState(componentConfig, dataMap)
+			if (!state) continue
+			stateMap[componentConfig.id] = state
+		}
+
+		return stateMap
 	}
 
 	return {
@@ -181,8 +203,8 @@ export const createView = (config: ViewConfig): View => {
 			idList,
 			hidden: hiddenComponentList,
 			extactFromDataMap,
-			getComputedFormula,
-			getColorMap,
+			getComponentConfigMap,
+			getComponentStateMap,
 		},
 		dataIndexerList,
 	}

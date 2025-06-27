@@ -37,7 +37,7 @@ describe('[Service] Buffer Strategy', () => {
 		const initDate = createDateFromShift(10)
 		const finalDate = createDateFromShift(20)
 
-		const snapshotList = await bufferStrategy.forward(firstSnapshotList, initDate, finalDate)
+		const snapshotList = await bufferStrategy.forward(initDate, finalDate, firstSnapshotList)
 
 		compareSnapshotInRange(snapshotList, mockConnection, initDate, finalDate)
 	})
@@ -46,7 +46,7 @@ describe('[Service] Buffer Strategy', () => {
 		const from = createDateFromShift(5)
 		const to = createDateFromShift(15)
 
-		await bufferStrategy.update({ from, to })
+		await bufferStrategy.update(from, to)
 
 		restartSpy.callCount.should.equal(1)
 		forwardSpy.callCount.should.equal(0)
@@ -55,12 +55,12 @@ describe('[Service] Buffer Strategy', () => {
 		const firstFrom = createDateFromShift(5)
 		const firstTo = createDateFromShift(15)
 
-		const snapshotList = await bufferStrategy.update({ from: firstFrom, to: firstTo })
+		const snapshotList = await bufferStrategy.update(firstFrom, firstTo)
 
 		const from = createDateFromShift(10)
 		const to = createDateFromShift(20)
 
-		await bufferStrategy.update({ from, to, snapshotList })
+		await bufferStrategy.update(from, to, snapshotList)
 
 		restartSpy.callCount.should.equal(1)
 		forwardSpy.callCount.should.equal(1)
@@ -69,12 +69,12 @@ describe('[Service] Buffer Strategy', () => {
 		const firstFrom = createDateFromShift(5)
 		const firstTo = createDateFromShift(15)
 
-		const snapshotList = await bufferStrategy.update({ from: firstFrom, to: firstTo })
+		const snapshotList = await bufferStrategy.update(firstFrom, firstTo)
 
 		const from = createDateFromShift(20)
 		const to = createDateFromShift(30)
 
-		const newSnaphostList = await bufferStrategy.update({ from, to, snapshotList })
+		const newSnaphostList = await bufferStrategy.update(from, to, snapshotList)
 
 		snapshotList.should.equal(newSnaphostList)
 
@@ -85,12 +85,12 @@ describe('[Service] Buffer Strategy', () => {
 		const firstFrom = createDateFromShift(10)
 		const firstTo = createDateFromShift(20)
 
-		const snapshotList = await bufferStrategy.update({ from: firstFrom, to: firstTo })
+		const snapshotList = await bufferStrategy.update(firstFrom, firstTo)
 
 		const from = createDateFromShift(5)
 		const to = createDateFromShift(9)
 
-		await bufferStrategy.update({ from, to, snapshotList })
+		await bufferStrategy.update(from, to, snapshotList)
 
 		restartSpy.callCount.should.equal(2)
 		forwardSpy.callCount.should.equal(0)
