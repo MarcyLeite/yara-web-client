@@ -24,7 +24,7 @@ const options = ref<Option[]>([noneOption])
 
 const onSelect = <T,>(option: T) => {
 	const value = option as number
-	store.setView(value === -1 ? null : value)
+	store.setView(value)
 }
 
 const update = () => {
@@ -33,4 +33,7 @@ const update = () => {
 
 watch([viewList], update)
 onMounted(update)
+onUnmounted(() => {
+	store.setView(-1)
+})
 </script>

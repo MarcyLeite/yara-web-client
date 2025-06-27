@@ -1,137 +1,107 @@
-import type { DataMap } from '@/modules/consumer/buffer'
-import type { Config } from '@/modules/configuration'
-import { createConnection, type Connection } from '@/modules/connection/connection'
-import { createConsumerUpdater, type ConsumerUpdater } from '@/modules/consumer-updater'
-import { createPainter, type Painter } from '@/modules/painter'
-import { type Yara3D } from '@/modules/scene3D/yara-3d'
-import { createView, type ComponentColorMap, type View } from '@/modules/view'
-import type { Optional } from '@/utils/types'
+import type { Yara3D, Yara3DState } from '@/modules/scene3D/yara-3d'
+import type { Config } from '../modules/configuration'
 import { defineStore } from 'pinia'
-import type { Object3D } from 'three'
+import {
+	createView,
+	type ComponentStateMap,
+	type View,
+	type ViewComponentConfig,
+} from '@/modules/view'
+import { createConsumer, type Consumer } from '@/modules/consumer/consumer'
+import { createConnection } from '@/modules/connection/connection'
+import { createBufferStrategy } from '@/modules/consumer/buffer-strategy'
+import type { Buffer } from '@/modules/consumer/buffer'
 
 const BUFFER_SIZE = 60000
+const BACKWARDS_SHIFT = 10000
 
 export const useYaraStore = defineStore('yara-store', () => {
 	const initialDate = import.meta.env.INITIAL_DATE
 		? new Date(import.meta.env.INITIAL_DATE)
 		: new Date()
 
-	const viewListRef = ref<View[]>([])
+	const config = ref<Config | null>(null)
+	const consumer = ref<Consumer | null>(null)
 
-	const connectionRef = ref<Optional<Connection>>(null)
-	const modelPathRef = ref<Optional<string>>(null)
+	const yara3DState = reactive<Partial<Yara3DState>>({})
+	const yara3D = ref<Yara3D | null>(null)
+	const viewList = ref<View[]>([])
 
-	const moment = ref(initialDate)
-	const viewRef = ref<Optional<View>>(null)
-	const dataMapRef = ref<DataMap>({})
-	const colorMapRef = ref<ComponentColorMap>({})
-	const selectedObject3DRef = ref<Object3D | null>(null)
-	const hiddenObjectListRef = ref<string[]>([])
+	const selectedView = ref<View | null>(null)
+	const moment = ref(new Date(initialDate))
+	const buffer = ref<Buffer | null>(null)
 
-	const yara3DRef = ref<Optional<Yara3D>>(null)
-	const consumerUpdaterRef = ref<Optional<ConsumerUpdater>>(null)
-	const painterRef = ref<Optional<Painter>>(null)
-
-	const setConfig = (newConfig: Config) => {
-		viewListRef.value = newConfig.views.map((viewConfig) => createView(viewConfig))
-		connectionRef.value = createConnection(newConfig.connection)
-		modelPathRef.value = newConfig.modelPath
-	}
+	const stateMap = ref<ComponentStateMap | null>(null)
+	const componentConfigMap = ref<Record<string, ViewComponentConfig> | null>(null)
 
 	const setMoment = (newMoment: Date) => {
 		if (newMoment.getTime() > Date.now()) newMoment = new Date()
 		const prev = moment.value
 		moment.value = newMoment
 
-		const consumerUpdater = consumerUpdaterRef.value
+		if (prev.getTime() === moment.value.getTime()) return
+		if (!consumer.value || !yara3D.value || !selectedView.value) return
 
-		if (consumerUpdater) {
-			consumerUpdater.setMoment(newMoment)
-			dataMapRef.value = consumerUpdater.fixedDataMap ?? {}
+		consumer.value.setMoment(moment.value)
+		buffer.value = consumer.value.getBuffer()
+
+		const dataMap = buffer.value.getSnapshot(moment.value)
+		stateMap.value = selectedView.value.components.getComponentStateMap(dataMap)
+		yara3D.value.paint(stateMap.value)
+	}
+
+	const setConfig = (newConfig: Config) => {
+		config.value = newConfig
+		viewList.value = newConfig.views.map((config) => createView(config))
+	}
+	const setYara3D = (newYara3D: Yara3D) => {
+		newYara3D.onStateChange = (prop, value) => {
+			yara3DState[prop] = value as never
 		}
-
-		const painter = painterRef.value
-		if (!painter || newMoment === prev) return
-
-		if (newMoment > prev) painter.update()
-		else painter.refresh()
-		colorMapRef.value = painter.colorMap
+		yara3D.value = newYara3D
 	}
 
-	const setYara3D = (yara3D?: Yara3D) => {
-		yara3DRef.value?.dispose()
-		yara3DRef.value = yara3D ?? null
+	const setView = async (index?: number) => {
+		selectedView.value = index === undefined ? null : (viewList.value[index] ?? null)
+
+		yara3D.value?.reset(selectedView.value)
+		consumer.value?.dispose()
+
+		if (!selectedView.value || !yara3D.value || !config.value) return
+
+		componentConfigMap.value = selectedView.value.components.getComponentConfigMap()
+
+		const connection = createConnection(config.value.connection)
+		const strategy = createBufferStrategy(connection, selectedView.value.dataIndexerList)
+
+		const shiftDate = new Date(moment.value.getTime() - BACKWARDS_SHIFT)
+		consumer.value = await createConsumer(strategy, shiftDate, BUFFER_SIZE)
+
+		consumer.value.setMoment(moment.value)
+		buffer.value = consumer.value.getBuffer()
+
+		const dataMap = buffer.value.getSnapshot(moment.value)
+		const stateMap = selectedView.value.components.getComponentStateMap(dataMap)
+		yara3D.value.paint(stateMap)
 	}
-
-	const setView = async (index: number | null) => {
-		const view = viewListRef.value[index ?? -1] ?? null
-		selectedObject3DRef.value = null
-		viewRef.value = view
-		hiddenObjectListRef.value = view ? [...view.components.hidden] : []
-	}
-
-	const setSelectedObject3D = (object3D: Object3D | null) => {
-		selectedObject3DRef.value = object3D
-	}
-
-	watch([viewRef, connectionRef], async () => {
-		const view = viewRef.value
-		const connection = connectionRef.value
-		const yara3D = yara3DRef.value
-
-		painterRef.value?.reset()
-		consumerUpdaterRef.value?.dispose()
-		yara3D?.reset()
-
-		painterRef.value = null
-		dataMapRef.value = {}
-		colorMapRef.value = {}
-		consumerUpdaterRef.value = null
-
-		if (!view || !connection || !yara3D) return
-
-		const shiftedDate = new Date(moment.value.getTime() - 10000)
-		const consumerUpdater = await createConsumerUpdater(shiftedDate, connection, view, BUFFER_SIZE)
-		const painter = createPainter(consumerUpdater, view, yara3D)
-
-		painter.reset()
-
-		consumerUpdater.setMoment(moment.value)
-		painter.refresh()
-
-		consumerUpdaterRef.value = consumerUpdater
-		dataMapRef.value = consumerUpdater.fixedDataMap ?? {}
-		colorMapRef.value = painter.colorMap
-		painterRef.value = painter
-	})
-
-	watch(
-		[hiddenObjectListRef],
-		() => {
-			yara3DRef.value?.hideObjects(hiddenObjectListRef.value)
-		},
-		{ deep: true }
-	)
 
 	const dispose = () => {
-		consumerUpdaterRef.value?.dispose()
+		consumer.value?.dispose()
 	}
 
 	return {
+		config,
+		viewList,
+		selectedView,
 		moment,
-		modelPath: modelPathRef,
-		dataMap: dataMapRef,
-		colorMap: colorMapRef,
-		view: viewRef,
-		viewList: viewListRef,
-		selectedObject3D: selectedObject3DRef,
-		hiddenObjectList: hiddenObjectListRef,
-		yara3d: yara3DRef,
-		setMoment,
+		yara3D,
+		stateMap,
+		componentConfigMap,
+		yara3DState,
 		setConfig,
 		setYara3D,
 		setView,
-		setSelectedObject3D,
+		setMoment,
 		dispose,
 	}
 })

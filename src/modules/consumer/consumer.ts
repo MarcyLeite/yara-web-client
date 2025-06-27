@@ -1,58 +1,65 @@
-import { createBuffer, type DataMap } from './buffer'
+import { createBuffer } from './buffer'
 import type { BufferStrategy } from './buffer-strategy'
 import type { Buffer } from './buffer'
 
-/**
- * Abstraction of a Consumer that will create a buffer and updated based on time.
- */
 export type Consumer = {
-	/**
-	 * get dataMap from all last values on given moment.
-	 * @param moment get values until this Date
-	 * @returns DataMap
-	 */
-	getSnapshot: (moment: Date) => DataMap
-
-	/**
-	 * get dataMap values on given range.
-	 * @param moment1 range start
-	 * @param moment2 range end
-	 * @returns DataMap
-	 */
-	getDifference: (moment1: Date, moment2: Date) => DataMap
-
-	/**
-	 * @async
-	 * updated buffer and result from getDataMap.
-	 * @param moment Given moment
-	 * @returns Consumer
-	 */
-	update: (moment: Date) => Promise<Consumer>
-}
-
-const updateConsumer = (oldBuffer: Buffer) => async (moment: Date) => {
-	const buffer = await oldBuffer.update({ moment })
-
-	const consumer: Consumer = {
-		getSnapshot: buffer.getSnapshot,
-		getDifference: buffer.getDifference,
-		update: updateConsumer(buffer),
-	}
-
-	return consumer
+	getBuffer: () => Buffer
+	setMoment: (moment: Date) => void
+	start: () => void
+	finish: () => void
+	dispose: () => void
 }
 
 export const createConsumer = async (
 	bufferStrategy: BufferStrategy,
 	initialDate: Date,
 	bufferSize: number
-) => {
-	const moment = initialDate
-	const buffer = await createBuffer({
+): Promise<Consumer> => {
+	let buffer = await createBuffer({
 		strategy: bufferStrategy,
 		size: bufferSize,
-		moment,
+		moment: initialDate,
 	})
 
-	return updateConsumer(buffer)(moment)
+	let currentMoment = initialDate
+	const setMoment = (moment: Date) => {
+		const prev = currentMoment
+
+		if (moment.getTime() === prev.getTime()) {
+			return
+		}
+
+		currentMoment = moment
+	}
+
+	let timout: number | undefined
+	let running = false
+
+	const consumerLoopCallback = async () => {
+		buffer = await buffer.update({ moment: new Date(currentMoment.getTime() - 10000) })
+		if (!running) return
+		timout = setTimeout(consumerLoopCallback, 100)
+	}
+
+	const start = () => {
+		running = true
+		consumerLoopCallback()
+	}
+
+	const finish = () => {
+		running = false
+	}
+
+	const dispose = () => {
+		finish()
+		clearTimeout(timout)
+	}
+
+	return {
+		getBuffer: () => buffer,
+		setMoment,
+		start,
+		finish,
+		dispose,
+	}
 }

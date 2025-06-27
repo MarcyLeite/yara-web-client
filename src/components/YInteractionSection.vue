@@ -21,6 +21,6 @@ type Props = {
 const { store } = defineProps<Props>()
 
 const onReset = () => {
-	store.yara3d?.resetCamera()
+	store.yara3D?.resetCamera()
 }
 </script>

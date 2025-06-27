@@ -3,11 +3,11 @@ import { createScene } from './scene'
 import { createOrbitControls } from './orbit-controls'
 import { createRenderer, startAnimationLoop } from './renderer'
 import { createEffects } from './effects'
-import { doRecursily, ghostifyModel, loadModel } from './load-model'
+import { loadModel } from './load-model'
 import type { EffectComposer, OrbitControls } from 'three/examples/jsm/Addons.js'
 import { createResizeObserver } from './resize-observer'
-import { addInteraction, type InteractionCallbacks } from './interactions'
-import type { ComponentColorMap, View } from '../view'
+import { addInteraction, type InteractionCallbacks } from './interaction'
+import { createTransmutator } from './transmutator'
 
 export type Yara3DOptions = {
 	mode: 'ghost'
@@ -28,20 +28,37 @@ export type Yara3DElements = {
 	composer: EffectComposer
 }
 
+export type Yara3DState = {
+	fps: number
+	hiddenList: string[]
+	selectedObject: THREE.Object3D | null
+}
+
+type StateKeys = keyof Yara3DState
+
 export const createYara3D = async (
 	rootElement: HTMLElement,
 	modelPath: string,
 	interactionsCallback: InteractionCallbacks
 ) => {
 	const boxSize = extractSize(rootElement)
-
 	const originalModel = await loadModel(modelPath)
-	let model: THREE.Group
 
-	const objectIdList: string[] = []
-	doRecursily(originalModel, (mesh) => {
-		objectIdList.push(mesh.name)
-	})
+	const state = {
+		fps: 0,
+		hiddenList: [],
+		selectedObject: null,
+	}
+
+	const handler: ProxyHandler<Yara3DState> = {
+		set(target, prop: StateKeys, value) {
+			target[prop] = value
+			yara3D.onStateChange(prop, value)
+			return true
+		},
+	}
+
+	const proxyState = new Proxy(state, handler)
 
 	const { scene, camera } = createScene({
 		boxSize,
@@ -56,57 +73,23 @@ export const createYara3D = async (
 
 	const sceneElements = { renderer, scene, camera, orbitControls, composer }
 
-	const { animate, fps } = startAnimationLoop(sceneElements)
+	const { animate } = startAnimationLoop(sceneElements, proxyState)
 	const resizeObserver = createResizeObserver(rootElement, animate, sceneElements)
-	const interaction = addInteraction(rootElement, interactionsCallback, sceneElements, effects)
+	const interaction = addInteraction(
+		rootElement,
+		interactionsCallback,
+		sceneElements,
+		effects,
+		proxyState
+	)
+	const transmutator = createTransmutator(scene, originalModel, interaction, proxyState)
 
 	const resetCamera = () => {
 		orbitControls.target = new THREE.Vector3(0, 0, 0)
 	}
 
-	const hideObjects = (hiddenList: string[]) => {
-		for (const objectId of objectIdList) {
-			const object3d = model.getObjectByName(objectId)
-			if (!object3d) continue
-			object3d.visible = !hiddenList.includes(objectId)
-		}
-	}
-
-	const reset = (view?: View) => {
-		scene.remove(model)
-		model = originalModel.clone(true)
-
-		if (!view) {
-			scene.add(model)
-			interaction.refresh(model)
-			return
-		}
-
-		const { mode } = view.scene
-		hideObjects(view.components.hidden)
-
-		if (mode === 'ghost') ghostifyModel(model)
-
-		scene.add(model)
-		interaction.refresh(model)
-	}
-
-	reset()
-
-	const paint = (componentColorMap?: ComponentColorMap) => {
-		if (!componentColorMap) return
-		for (const [name, colorObject] of Object.entries(componentColorMap)) {
-			const color = colorObject.color
-			const object3d = scene.getObjectByName(name) as THREE.Mesh
-			if (!object3d || !color) continue
-			const material = (object3d.material as THREE.MeshStandardMaterial).clone()
-
-			material.color = new THREE.Color(color)
-			object3d.material = material
-		}
-	}
-
 	const dispose = () => {
+		transmutator.reset()
 		renderer.dispose()
 		orbitControls.dispose()
 		interaction.dispose()
@@ -114,17 +97,17 @@ export const createYara3D = async (
 		resizeObserver.disconnect()
 	}
 
-	return {
-		fps,
-		renderer,
-		resizeObserver,
-		resetCamera,
-		hideObjects,
-		objectIdList,
-		paint,
-		reset,
-		dispose,
-	}
+	const yara3D = Object.assign(
+		{
+			renderer,
+			resetCamera,
+			dispose,
+			onStateChange: (_prop: StateKeys, _value: unknown) => {},
+		},
+		transmutator
+	)
+
+	return yara3D
 }
 
 export type Yara3D = Awaited<ReturnType<typeof createYara3D>>

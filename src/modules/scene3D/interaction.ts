@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import type { Yara3DElements } from './yara-3d'
+import type { Yara3DElements, Yara3DState } from './yara-3d'
 import type { Effects } from './effects'
 
 export type OnSelectCallback = (object3d: THREE.Object3D | null) => void
@@ -12,7 +12,8 @@ export const addInteraction = (
 	rootElement: HTMLElement,
 	{ onSelectCallback }: InteractionCallbacks,
 	{ scene, camera }: Yara3DElements,
-	{ selectedPass, hoverPass }: Effects
+	{ selectedPass, hoverPass }: Effects,
+	state: Yara3DState
 ) => {
 	const raycaster = new THREE.Raycaster()
 
@@ -48,6 +49,7 @@ export const addInteraction = (
 		if (timout) clearTimeout(timout)
 
 		selectedObject = getIntesection(event)
+		state.selectedObject = selectedObject
 
 		intersectionIndex++
 
@@ -107,3 +109,5 @@ export const addInteraction = (
 
 	return { refresh, dispose }
 }
+
+export type SceneInteraction = ReturnType<typeof addInteraction>

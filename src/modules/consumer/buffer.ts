@@ -3,32 +3,26 @@ import type { BufferStrategy } from './buffer-strategy'
 import type { GenericData, Snapshot } from '../connection/connection'
 
 /**
- * Indentifier key: GenericData value.
+ * Indentifier key: GenericData value
  */
 export type DataMap = Record<string, GenericData>
 
-/**
- * Params passed to buffer on creation.
- */
 type BufferOptions = {
 	/**
-	 * Buffer strategy used by buffer.
+	 * Buffer strategy used by buffer
 	 */
 	strategy: BufferStrategy
 	/**
-	 * Size in milesconds.
+	 * Size in milesconds
 	 * @example size: 60000 // One minute
 	 */
 	size: number
 	/**
-	 * Starter datetime from buffer
+	 * Start datetime from buffer
 	 */
 	moment: Date
 }
 
-/**
- * Abstraction of Buffer used to make database consuption efficient
- */
 export type Buffer = {
 	/**
 	 * @async
@@ -102,11 +96,7 @@ export const updateBuffer = async (
 	const hasBufferChanges =
 		moment.getTime() !== originalOptions.moment.getTime() || size !== originalOptions.size
 	const snapshotList = hasBufferChanges
-		? await strategy.update({
-				snapshotList: prevSnapshotList,
-				from: moment,
-				to: finalDate,
-			})
+		? await strategy.update(moment, finalDate, prevSnapshotList)
 		: prevSnapshotList
 
 	const update = (newOptions: Partial<BufferOptions>) => {
@@ -162,10 +152,7 @@ export const createBuffer = async (options: BufferOptions): Promise<Buffer> => {
 	options.size = options.size ?? 1
 	const { strategy, moment, size } = options
 	const finalDate = new Date(moment.getTime() + size)
-	const snapshotList = await strategy.update({
-		from: moment,
-		to: finalDate,
-	})
+	const snapshotList = await strategy.update(moment, finalDate)
 
 	return updateBuffer(options, {}, snapshotList)
 }
