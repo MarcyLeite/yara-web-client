@@ -3,13 +3,23 @@
 		<div class="pa-2" style="width: 12rem">
 			<div class="d-flex flex-column ga-3">
 				<div class="text-bold text-truncate">
-					{{ yara3DState.selectedObject?.name ?? 'No Seletion' }}
+					{{ selectedObject?.name ?? 'No Seletion' }}
 				</div>
 
-				<div v-if="yara3DState.selectedObject" class="d-flex flex-column ga-2">
+				<div v-if="selectedObject" class="d-flex flex-column ga-2">
 					<y-divider />
 					<div class="d-flex justify-end py-2 text-subtitle-2">
-						<y-btn type="flat" @click="() => {}"> hide </y-btn>
+						<y-btn
+							type="flat"
+							@click="
+								() => {
+									if (!selectedObject) return
+									store.yara3D?.toggleObjectVisible(selectedObject.name, false)
+								}
+							"
+						>
+							hide
+						</y-btn>
 					</div>
 					<div class="px-2 d-flex flex-column ga-2">
 						<div class="d-flex justify-space-between">
@@ -77,6 +87,7 @@
 import type { ComponentState, ViewComponentConfig } from '@/modules/view'
 import type { YaraStore } from '@/stores/yara-store'
 import { storeToRefs } from 'pinia'
+import type { Object3D } from 'three'
 
 type Props = {
 	store: YaraStore
@@ -86,21 +97,22 @@ const { store } = defineProps<Props>()
 const yara3DState = store.yara3DState
 const { selectedView, stateMap } = storeToRefs(store)
 
+const selectedObject = ref<Object3D | null>(null)
 const componentConfig = ref<ViewComponentConfig | null>(null)
-
 const componentState = ref<ComponentState | null>(null)
+
 const columnList = ref<[string[], unknown[]]>([[], []])
 
 watch([selectedView, stateMap, () => yara3DState.selectedObject], () => {
 	columnList.value = [[], []]
-	const selectedObject = yara3DState.selectedObject
-	if (!selectedView.value || !stateMap.value || !selectedObject) {
+	selectedObject.value = yara3DState.selectedObject ?? null
+	if (!selectedView.value || !stateMap.value || !selectedObject.value) {
 		return
 	}
 	componentConfig.value = store.componentConfigMap
-		? store.componentConfigMap[selectedObject.name]
+		? store.componentConfigMap[selectedObject.value.name]
 		: null
-	componentState.value = stateMap.value[selectedObject.name]
+	componentState.value = stateMap.value[selectedObject.value.name]
 	if (!componentState.value) return
 	const filteredDataMap = componentState.value.dataMap
 
