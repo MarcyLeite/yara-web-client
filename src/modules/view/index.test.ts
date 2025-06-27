@@ -25,15 +25,15 @@ describe('[Service] View', () => {
 	})
 
 	it('Should generate component data', () => {
-		const colorMap = view.components.getColorMap(dataMap)
-		Object.keys(colorMap).should.have.length(3)
-		colorMap.should.haveOwnProperty('0')
-		colorMap.should.haveOwnProperty('1')
+		const stateMap = view.components.getComponentStateMap(dataMap)
+		Object.keys(stateMap).should.have.length(3)
+		stateMap.should.haveOwnProperty('0')
+		stateMap.should.haveOwnProperty('1')
 
-		if (!colorMap['0'].color || !colorMap['1'].color) return
+		if (!stateMap['0'].color || !stateMap['1'].color) return
 
-		colorMap['0'].color.should.equal(hueToHSL(0))
-		colorMap['1'].color.should.equal(hueToHSL(240))
+		stateMap['0'].color.should.equal(hueToHSL(0))
+		stateMap['1'].color.should.equal(hueToHSL(240))
 	})
 	it('Should not have color for components with "isHidden: true"', () => {
 		const hiddenComponentList = view.components.hidden
@@ -54,21 +54,21 @@ describe('[Service] View', () => {
 		exclusiveDataMap.should.not.have.property('bar')
 	})
 
-	it('Should exclude property from colormap when property not specified in datamap', () => {
+	it('Should exclude property from state map when property not specified in datamap', () => {
 		const otherDatamap = structuredClone(dataMap)
 		delete otherDatamap['foo']
-		const colorMap = view.components.getColorMap(otherDatamap)
+		const stateMap = view.components.getComponentStateMap(otherDatamap)
 
-		colorMap.should.not.haveOwnProperty('0')
-		colorMap.should.haveOwnProperty('1')
+		stateMap.should.not.haveOwnProperty('0')
+		stateMap.should.haveOwnProperty('1')
 	})
 
 	it('Should compute value and return correct value', () => {
-		const colorMap = view.components.getColorMap(dataMap)
+		const stateMap = view.components.getComponentStateMap(dataMap)
 
-		should.exist(colorMap['3'])
-		if (!colorMap['3'].color) return
+		should.exist(stateMap['3'])
+		if (!stateMap['3'].color) return
 
-		colorMap['3'].color.should.equal(hueToHSL(36))
+		stateMap['3'].color.should.equal(hueToHSL(36))
 	})
 })

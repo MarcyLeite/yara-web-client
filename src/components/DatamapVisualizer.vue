@@ -3,37 +3,23 @@
 		<div class="pa-2" style="width: 12rem">
 			<div class="d-flex flex-column ga-3">
 				<div class="text-bold text-truncate">
-					{{ selectedObject3D?.name ?? 'No Seletion' }}
+					{{ yara3DState.selectedObject?.name ?? 'No Seletion' }}
 				</div>
 
-				<div v-if="selectedObject3D" class="d-flex flex-column ga-2">
+				<div v-if="yara3DState.selectedObject" class="d-flex flex-column ga-2">
 					<y-divider />
 					<div class="d-flex justify-end py-2 text-subtitle-2">
-						<y-btn
-							type="flat"
-							@click="
-								() => {
-									hiddenObjectList.push(selectedObject3D!.name)
-									store.setSelectedObject3D(null)
-								}
-							"
-						>
-							hide
-						</y-btn>
+						<y-btn type="flat" @click="() => {}"> hide </y-btn>
 					</div>
 					<div class="px-2 d-flex flex-column ga-2">
 						<div class="d-flex justify-space-between">
 							<div class="text-bold">Value</div>
-							<div
-								v-if="
-									store.colorMap[selectedObject3D.name] &&
-									typeof store.colorMap[selectedObject3D.name].value === 'number'
-								"
-							>
-								{{ (store.colorMap[selectedObject3D.name].value as number).toFixed(2) }}
-							</div>
-							<div v-else-if="store.colorMap[selectedObject3D.name]">
-								{{ store.colorMap[selectedObject3D.name].value }}
+							<div v-if="componentState">
+								{{
+									typeof componentState.value === 'number'
+										? componentState.value.toFixed(2)
+										: componentState.value
+								}}
 							</div>
 						</div>
 
@@ -77,7 +63,7 @@
 								class="grow-1 bg-panel px-2 rounded-lg outline-light-alpha-40"
 								style="text-wrap: wrap; overflow: visible"
 							>
-								{{ view?.components.getComputedFormula(selectedObject3D.name) ?? '-' }}
+								{{ componentConfig?.compute ?? '-' }}
 							</div>
 						</div>
 					</div>
@@ -88,6 +74,7 @@
 </template>
 
 <script setup lang="ts">
+import type { ComponentState, ViewComponentConfig } from '@/modules/view'
 import type { YaraStore } from '@/stores/yara-store'
 import { storeToRefs } from 'pinia'
 
@@ -96,17 +83,26 @@ type Props = {
 }
 
 const { store } = defineProps<Props>()
-const { dataMap, selectedObject3D, view, hiddenObjectList } = storeToRefs(store)
+const yara3DState = store.yara3DState
+const { selectedView, stateMap } = storeToRefs(store)
 
+const componentConfig = ref<ViewComponentConfig | null>(null)
+
+const componentState = ref<ComponentState | null>(null)
 const columnList = ref<[string[], unknown[]]>([[], []])
 
-watch([view, selectedObject3D, dataMap], () => {
-	if (!view.value || !selectedObject3D.value) {
-		columnList.value = [[], []]
+watch([selectedView, stateMap, () => yara3DState.selectedObject], () => {
+	columnList.value = [[], []]
+	const selectedObject = yara3DState.selectedObject
+	if (!selectedView.value || !stateMap.value || !selectedObject) {
 		return
 	}
-	const filteredDataMap =
-		view.value.components.extactFromDataMap(selectedObject3D.value.name, dataMap.value) ?? {}
+	componentConfig.value = store.componentConfigMap
+		? store.componentConfigMap[selectedObject.name]
+		: null
+	componentState.value = stateMap.value[selectedObject.name]
+	if (!componentState.value) return
+	const filteredDataMap = componentState.value.dataMap
 
 	columnList.value = Object.entries(filteredDataMap).reduce(
 		(list, [key, value]) => {
