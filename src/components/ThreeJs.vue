@@ -32,6 +32,8 @@ const loadComponent = async () => {
 
 	yara3DRef.value = yara3D
 	store.setYara3D(yara3D)
+
+	yara3D.reset(store.selectedView)
 }
 
 onMounted(loadComponent)
