@@ -18,11 +18,12 @@ export const addInteraction = (
 	const raycaster = new THREE.Raycaster()
 
 	let isDragging = false
+	let isToggling = false
 	let timout: number | null = null
 	let selectedObject: THREE.Object3D | null = null
-	let intersectionIndex = 0
+	let toSelectObject: THREE.Object3D | null = null
 
-	const getIntesection = (event: MouseEvent) => {
+	const getIntersection = (event: MouseEvent) => {
 		const x = (event.clientX / rootElement.clientWidth) * 2 - 1
 		const y = -(event.clientY / rootElement.clientHeight) * 2 + 1
 		const mouse = new THREE.Vector2(x, y)
@@ -31,14 +32,28 @@ export const addInteraction = (
 		const intersectList = raycaster
 			.intersectObject(scene, true)
 			.map((intersection) => intersection.object)
+			.filter(intersection => intersection.visible)
 
 		if (intersectList.length === 0) {
-			intersectionIndex = 0
 			return null
 		}
 
-		const intersect = intersectList[intersectionIndex]
-		return intersect
+		let selectedIntersection: THREE.Object3D | null = null
+		
+		if(isToggling && intersectList.at(-1) === selectedObject) return intersectList[0] 
+		for (const intersect of intersectList) {
+			if(isToggling && selectedObject === intersect) {
+				selectedIntersection = null
+				continue
+			}
+
+			if (!selectedIntersection) {
+				selectedIntersection = intersect
+				continue
+			}
+		}
+
+		return selectedIntersection
 	}
 
 	const onClick = (event: MouseEvent) => {
@@ -48,28 +63,24 @@ export const addInteraction = (
 		if (isDragging) return
 		if (timout) clearTimeout(timout)
 
-		selectedObject = getIntesection(event)
+		selectedObject = toSelectObject
 		state.selectedObject = selectedObject
 
-		intersectionIndex++
-
-		let nextObject = getIntesection(event)
-		if (!nextObject) {
-			intersectionIndex = 0
-			nextObject = getIntesection(event)
-		}
-
 		selectedPass.selectedObjects = selectedObject ? [selectedObject] : []
-		hoverPass.selectedObjects = nextObject ? [nextObject] : []
+		isToggling = true
+
+		onHover(event, true)
 
 		onSelectCallback?.call({}, selectedObject)
 	}
 
-	const onHover = (event: MouseEvent) => {
+	const onHover = (event: MouseEvent, toggle = false) => {
 		if (isDragging) return
-		intersectionIndex = 0
+		isToggling = toggle
 
-		const hoverObject = getIntesection(event)
+		const hoverObject = getIntersection(event)
+
+		toSelectObject = hoverObject
 		if (!hoverObject || hoverObject === selectedObject) {
 			hoverPass.selectedObjects = []
 			return
