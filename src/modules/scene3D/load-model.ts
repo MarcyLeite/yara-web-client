@@ -14,10 +14,9 @@ const createTransparentMaterial = (color: string | number) => {
 export const ghostifyObject = (object: THREE.Group | THREE.Mesh) => {
 	let i = 0
 	const object3d = object as THREE.Mesh
-	if(object3d.isMesh) {
-		
-			updateOjbect3D(object3d, i)
-			return
+	if (object3d.isMesh) {
+		updateOjbect3D(object3d, i)
+		return
 	}
 
 	const group = object as THREE.Group
@@ -26,7 +25,6 @@ export const ghostifyObject = (object: THREE.Group | THREE.Mesh) => {
 		updateOjbect3D(object3D as THREE.Mesh, i)
 		i++
 	}
-
 }
 
 const updateOjbect3D = (object3D: THREE.Mesh, i: number) => {

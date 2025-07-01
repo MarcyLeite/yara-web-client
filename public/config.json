@@ -38,7 +38,7 @@
 				}
 			]
 		},
-    {
+		{
 			"display": "Key Color",
 			"mapper": {
 				"type": "key-color",
@@ -61,7 +61,7 @@
 				},
 				{
 					"id": "Body1",
-          "indexerList": ["A"],
+					"indexerList": ["A"],
 					"compute": "A % 2 === 0 ? 'ON' : 'OFF'"
 				}
 			]
