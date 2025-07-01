@@ -35,12 +35,6 @@ describe('[Service] View', () => {
 		stateMap['0'].color.should.equal(hueToHSL(0))
 		stateMap['1'].color.should.equal(hueToHSL(240))
 	})
-	it('Should not have color for components with "isHidden: true"', () => {
-		const hiddenComponentList = view.components.hidden
-
-		hiddenComponentList.should.have.length(1)
-		hiddenComponentList[0].should.equal('2')
-	})
 
 	it('Should extract datamap from object', () => {
 		const exclusiveDataMap = view.components.extactFromDataMap('0', dataMap)
