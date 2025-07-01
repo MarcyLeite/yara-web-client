@@ -8,7 +8,10 @@
 			</template>
 			<template #bottom>
 				<div class="text-text-alpha-50">
-					{{ ['Yara', mode === 'production' ? '' : mode, `v${version}`].join(' ') }}
+					{{ ['Yara', mode === 'production' ? '' : mode].join(' ') }}
+					<a :href="`https://github.com/MarcyLeite/yara-web-client/releases/tag/v${version}`" target="_blank">
+						{{ `v${version}` }}
+					</a> - By <a href="https://github.com/MarcyLeite"> Matheus Marciano </a>
 				</div>
 			</template>
 			<template #top-right>
