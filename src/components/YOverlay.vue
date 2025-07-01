@@ -15,7 +15,7 @@
 			<slot name="bottom-left" />
 		</div>
 		<div class="bottom p-absolute pa-4 w-100 d-flex align-center justify-center">
-			<div class="p-relative">
+			<div class="pointer-events-all p-relative">
 				<slot name="bottom" />
 			</div>
 		</div>

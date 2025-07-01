@@ -8,6 +8,14 @@
 		background: #{map.get(palette.$colors, 'bg')};
 	}
 
+	a {
+		transition: color 0.25s;
+		color: #{map.get(palette.$colors, 'primary')};
+		&:hover {
+			color: #{map.get(palette.$colors, 'primary-hover')};
+		}
+	}
+
 	.bg-layer {
 		position: absolute;
 		width: 100%;
