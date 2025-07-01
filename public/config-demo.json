@@ -1,4 +1,3 @@
-
 {
 	"modelPath": "snowman.glb",
 	"connection": {
@@ -75,7 +74,6 @@
 					"indexerList": ["cold2"]
 				},
 				{
-
 					"id": "Body3",
 					"indexerList": ["cold3"]
 				}
@@ -103,7 +101,7 @@
 				},
 				{
 					"id": "Body1",
-          "indexerList": ["walk"],
+					"indexerList": ["walk"],
 					"compute": "walk % 2 === 0 ? 'ON' : 'OFF'"
 				}
 			]

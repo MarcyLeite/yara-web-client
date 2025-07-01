@@ -5,7 +5,7 @@ import { ghostifyObject } from './load-model'
 import type { Yara3DMaterial, Yara3DState } from './yara-3d'
 
 const updateObjectMaterial = (material: Yara3DMaterial, model: THREE.Group | THREE.Mesh) => {
-		if (material === 'ghost') ghostifyObject(model)
+	if (material === 'ghost') ghostifyObject(model)
 }
 
 export const createTransmutator = (
@@ -37,10 +37,10 @@ export const createTransmutator = (
 
 		for (const component of configList) {
 			const object = model.getObjectByName(component.id) as THREE.Mesh
-			if(component.isHidden !== undefined && !component.isHidden) {
+			if (component.isHidden !== undefined && !component.isHidden) {
 				toggleObjectVisible(component.id, false)
 			}
-			if(component.material && component.material !== 'default') {
+			if (component.material && component.material !== 'default') {
 				updateObjectMaterial(component.material, object)
 			}
 		}

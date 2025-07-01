@@ -32,17 +32,17 @@ export const addInteraction = (
 		const intersectList = raycaster
 			.intersectObject(scene, true)
 			.map((intersection) => intersection.object)
-			.filter(intersection => intersection.visible)
+			.filter((intersection) => intersection.visible)
 
 		if (intersectList.length === 0) {
 			return null
 		}
 
 		let selectedIntersection: THREE.Object3D | null = null
-		
-		if(isToggling && intersectList.at(-1) === selectedObject) return intersectList[0] 
+
+		if (isToggling && intersectList.at(-1) === selectedObject) return intersectList[0]
 		for (const intersect of intersectList) {
-			if(isToggling && selectedObject === intersect) {
+			if (isToggling && selectedObject === intersect) {
 				selectedIntersection = null
 				continue
 			}

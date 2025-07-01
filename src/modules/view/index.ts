@@ -46,7 +46,7 @@ export type ViewConfig = {
 	 * @property name that will be displayed in app
 	 */
 	display: string
-	
+
 	scene: Partial<Yara3DOptions>
 	/**
 	 * @property configuration object for mapper
@@ -123,7 +123,7 @@ export const createView = (config: ViewConfig): View => {
 	const idList: string[] = []
 
 	const sceneConfig: Yara3DOptions = {
-		material: config.scene?.material ?? 'default'
+		material: config.scene?.material ?? 'default',
 	}
 
 	for (const { id, indexerList, isHidden } of config.components) {
