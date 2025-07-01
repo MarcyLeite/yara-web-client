@@ -10,6 +10,9 @@
 	"views": [
 		{
 			"display": "Thermal",
+			"scene": {
+				"material": "ghost"
+			},
 			"mapper": {
 				"type": "thermal",
 				"min": 0,
@@ -49,7 +52,8 @@
 			"components": [
 				{
 					"id": "Body3",
-					"compute": "'hot'"
+					"compute": "'hot'",
+					"material": "ghost"
 				},
 				{
 					"id": "Body2",

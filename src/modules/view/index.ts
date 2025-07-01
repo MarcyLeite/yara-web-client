@@ -1,7 +1,7 @@
 import type { GenericType } from '../connection/connection'
 import type { DataMap } from '../consumer/buffer'
 import { yaraParse } from '../eval'
-import type { Yara3DOptions } from '../scene3D/yara-3d'
+import type { Yara3DMaterial, Yara3DOptions } from '../scene3D/yara-3d'
 import {
 	createColorMapper,
 	type ColorMapper,
@@ -30,6 +30,8 @@ export type ViewComponentConfig = {
 	 */
 	indexerList?: string[]
 
+	material?: Yara3DMaterial
+
 	/**
 	 * @property string JS code to compute value
 	 */
@@ -44,6 +46,8 @@ export type ViewConfig = {
 	 * @property name that will be displayed in app
 	 */
 	display: string
+	
+	scene: Partial<Yara3DOptions>
 	/**
 	 * @property configuration object for mapper
 	 */
@@ -85,9 +89,9 @@ export type View = {
 		 */
 		idList: string[]
 		/**
-		 * @property string list of Object3D ids
+		 * @property string list of Object3D config
 		 */
-		hidden: string[]
+		config: ViewComponentConfig[]
 
 		getComponentConfigMap: () => Record<string, ViewComponentConfig>
 		/**
@@ -117,6 +121,10 @@ export const createView = (config: ViewConfig): View => {
 	const dataIndexerList: string[] = []
 	const hiddenComponentList: string[] = []
 	const idList: string[] = []
+
+	const sceneConfig: Yara3DOptions = {
+		material: config.scene?.material ?? 'default'
+	}
 
 	for (const { id, indexerList, isHidden } of config.components) {
 		idList.push(id)
@@ -198,10 +206,10 @@ export const createView = (config: ViewConfig): View => {
 
 	return {
 		display: config.display,
-		scene: mapper.scene,
+		scene: sceneConfig,
 		components: {
 			idList,
-			hidden: hiddenComponentList,
+			config: config.components,
 			extactFromDataMap,
 			getComponentConfigMap,
 			getComponentStateMap,

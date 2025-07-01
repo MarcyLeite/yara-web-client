@@ -1,5 +1,4 @@
 import type { GenericType } from '../connection/connection'
-import type { Yara3DOptions } from '../scene3D/yara-3d'
 import {
 	createMapperKeyColor,
 	type ColorMapperKeyColor,
@@ -30,7 +29,6 @@ export type ColorMapperType = {
 	 * @property type fix string for each implementaition
 	 */
 	type: string
-	scene: Yara3DOptions
 	/**
 	 * Calculates color given generic type
 	 * @param GenericType

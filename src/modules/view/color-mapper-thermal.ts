@@ -41,9 +41,6 @@ export const createMapperThermal = ({
 
 	return {
 		type: 'thermal',
-		scene: {
-			mode: 'ghost',
-		},
 		getColor,
 	}
 }
