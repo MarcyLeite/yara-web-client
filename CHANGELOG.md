@@ -1,8 +1,8 @@
-# [v0.5.4](https://github.com/MarcyLeite/yara-web-client/compare/v0.5.3...v0.5.4) (2025-07-01)
+# [v0.6.0](https://github.com/MarcyLeite/yara-web-client/compare/v0.5.4...v0.6.0) (2025-07-01)
 
-## 🐛 Bug Fixes
-- [0de2ebb](https://github.com/MarcyLeite/yara-web-client/commit/0de2ebb)  Fix selecting hidden component on click
+## ✨ New Features
+- [141cd0a](https://github.com/MarcyLeite/yara-web-client/commit/141cd0a)  Add option to configure material in view and components
 
 ## 🚑 Critical Hotfixes
-- [a7f17c3](https://github.com/MarcyLeite/yara-web-client/commit/a7f17c3) ️ Add link to release notes page and author page
+- [6c5c58b](https://github.com/MarcyLeite/yara-web-client/commit/6c5c58b) ️ Change scene option in view config to be optional
 
