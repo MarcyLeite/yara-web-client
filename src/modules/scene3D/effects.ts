@@ -25,6 +25,7 @@ const createOutlinePass = (
 	outlinePass.clear = false
 
 	outlinePass.edgeStrength = strength
+	outlinePass.edgeThickness = strength
 	outlinePass.edgeGlow = glow
 
 	outlinePass.visibleEdgeColor = new THREE.Color(visibleColor)
@@ -43,8 +44,8 @@ export const createEffects = (props: EffectsProps) => {
 
 	composer.addPass(renderPass)
 
-	const hoverPass = createOutlinePass(props, 0xbbbbff, 0xddddff)
-	const selectedPass = createOutlinePass(props, 0xff00000, 0xffbbbb)
+	const hoverPass = createOutlinePass(props, 0x0000ff, 0x000099, 1, 1)
+	const selectedPass = createOutlinePass(props, 0xffaaaa, 0x990000, 2, 2)
 
 	composer.addPass(hoverPass)
 	composer.addPass(selectedPass)
