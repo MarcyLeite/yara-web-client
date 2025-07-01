@@ -9,8 +9,9 @@ import { createResizeObserver } from './resize-observer'
 import { addInteraction, type InteractionCallbacks } from './interaction'
 import { createTransmutator } from './transmutator'
 
+export type Yara3DMaterial = 'ghost' | 'default'
 export type Yara3DOptions = {
-	mode: 'ghost'
+	material: Yara3DMaterial
 }
 
 const extractSize = (rootElement: HTMLElement) => {

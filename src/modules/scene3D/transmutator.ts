@@ -1,8 +1,12 @@
 import * as THREE from 'three'
 import type { SceneInteraction } from './interaction'
 import type { ComponentStateMap, View } from '../view'
-import { ghostifyModel } from './load-model'
-import type { Yara3DState } from './yara-3d'
+import { ghostifyObject } from './load-model'
+import type { Yara3DMaterial, Yara3DState } from './yara-3d'
+
+const updateObjectMaterial = (material: Yara3DMaterial, model: THREE.Group | THREE.Mesh) => {
+		if (material === 'ghost') ghostifyObject(model)
+}
 
 export const createTransmutator = (
 	scene: THREE.Scene,
@@ -26,11 +30,19 @@ export const createTransmutator = (
 		resetModel()
 		if (!view) return
 
-		const { mode } = view.scene
-		if (mode === 'ghost') ghostifyModel(model)
+		const { material } = view.scene
+		if (material === 'ghost') updateObjectMaterial('ghost', model)
 
-		for (const name of view.components.hidden) {
-			toggleObjectVisible(name, false)
+		const configList = view.components.config
+
+		for (const component of configList) {
+			const object = model.getObjectByName(component.id) as THREE.Mesh
+			if(component.isHidden !== undefined && !component.isHidden) {
+				toggleObjectVisible(component.id, false)
+			}
+			if(component.material && component.material !== 'default') {
+				updateObjectMaterial(component.material, object)
+			}
 		}
 	}
 

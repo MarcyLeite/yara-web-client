@@ -16,9 +16,6 @@ export const createMapperKeyColor = (options: ColorMapperKeyColorOptions): Color
 
 	return {
 		type: 'key-color',
-		scene: {
-			mode: 'ghost',
-		},
 		getColor,
 	}
 }
