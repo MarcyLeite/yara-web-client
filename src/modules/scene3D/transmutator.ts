@@ -16,8 +16,9 @@ export const createTransmutator = (
 ) => {
 	let model: THREE.Group
 	const resetModel = () => {
-		for (const name of hiddenList) {
-			toggleObjectVisible(name, true)
+		const length = hiddenList.length
+		for (let i = 0; i < length; i++) {
+			toggleObjectVisible(hiddenList[0], true)
 		}
 		scene.remove(model)
 		model = originalModel.clone(true)
