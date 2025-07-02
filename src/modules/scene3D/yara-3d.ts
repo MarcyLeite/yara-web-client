@@ -63,7 +63,7 @@ export const createYara3D = async (
 
 	const { scene, camera } = createScene({
 		boxSize,
-		backgroundColor: 0xffffff,
+		backgroundColor: 0x000000,
 		lightColor: 0xdddddd,
 	})
 

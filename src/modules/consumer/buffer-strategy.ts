@@ -86,7 +86,7 @@ export const createBufferStrategy = (connection: Connection, indexerList: string
 		update: async (from: Date, to: Date, snapshotList?: Snapshot[]) => {
 			const useRestart = () => bufferStrategy.restart(from, to)
 
-			if (snapshotList === undefined) {
+			if (snapshotList === undefined || snapshotList.length === 0) {
 				return await useRestart()
 			}
 			const begin = snapshotList[0].timestamp

@@ -7,7 +7,7 @@
 				</div>
 			</template>
 			<template #bottom>
-				<div class="text-text-alpha-50">
+				<div class="text-light-alpha-50">
 					{{ ['Yara', mode === 'production' ? '' : mode].join(' ') }}
 					<a
 						:href="`https://github.com/MarcyLeite/yara-web-client/releases/tag/v${version}`"
