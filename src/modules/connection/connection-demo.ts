@@ -55,7 +55,7 @@ const fixDataProperties = ({
 	max: fixValue(max, null),
 	defaultValue: fixValue(
 		defaultValue,
-		typeof max === 'number' && typeof min === 'number' ? max - min / 2 : 50
+		typeof max === 'number' && typeof min === 'number' ? (max - min) / 2 + min : 50
 	),
 	chance: fixValue(chance, 0.5),
 	shift: fixValue(shift, 1),
