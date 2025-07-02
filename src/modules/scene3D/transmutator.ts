@@ -37,7 +37,8 @@ export const createTransmutator = (
 
 		for (const component of configList) {
 			const object = model.getObjectByName(component.id) as THREE.Mesh
-			if (component.isHidden !== undefined && !component.isHidden) {
+			if (component.isHidden) {
+				console.log(component)
 				toggleObjectVisible(component.id, false)
 			}
 			if (component.material && component.material !== 'default') {
