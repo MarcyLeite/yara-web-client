@@ -1,4 +1,6 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+console.log('fix-bug')
+</script>
 
 <template>
 	<main class="yara-wrapper">
