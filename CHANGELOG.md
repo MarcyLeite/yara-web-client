@@ -1,5 +1,5 @@
-# [v0.6.3](https://github.com/MarcyLeite/yara-web-client/compare/v0.6.2...v0.6.3) (2025-07-02)
+# [v0.6.4](https://github.com/MarcyLeite/yara-web-client/compare/v0.6.3...v0.6.4) (2025-08-22)
 
-## 🚑 Critical Hotfixes
-- [f843285](https://github.com/MarcyLeite/yara-web-client/commit/f843285) ️ Update background to be dark
+## 🐛 Bug Fixes
+- [cbb9e9b](https://github.com/MarcyLeite/yara-web-client/commit/cbb9e9b)  Fix not logging &quot;fix-bug&quot;
 
